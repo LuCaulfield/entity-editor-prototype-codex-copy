@@ -190,8 +190,8 @@ export default function EntityEditorPrototype() {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Mode selector */}
-              <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                <div>
+              <div className="flex items-center gap-4">
+                <div className="shrink-0">
                   <Label className="text-sm font-medium">Working mode</Label>
                   <Tabs value={mode} onValueChange={(v) => setMode(v as "manual" | "bi")} className="mt-2">
                     <TabsList>
@@ -200,13 +200,13 @@ export default function EntityEditorPrototype() {
                     </TabsList>
                   </Tabs>
                 </div>
-                <div className="flex items-center gap-3 rounded-xl border bg-slate-50 px-4 py-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border bg-slate-50 px-4 py-3">
                   {mode === "bi" ? (
-                    <Sparkles className="h-5 w-5 text-teal-600" />
+                    <Sparkles className="h-5 w-5 shrink-0 text-teal-600" />
                   ) : (
-                    <Package2 className="h-5 w-5 text-slate-500" />
+                    <Package2 className="h-5 w-5 shrink-0 text-slate-500" />
                   )}
-                  <p className="max-w-xl text-sm text-slate-600">
+                  <p className="min-w-0 text-sm text-slate-600">
                     {mode === "manual"
                       ? "Manual mode is the default. No BI recommendations are generated. Entities are created only from the parameters defined by the buyer."
                       : "BI mode proposes an editable starting split. The buyer must explicitly accept or modify the proposal."}
