@@ -126,7 +126,7 @@ export default function EntityAssignmentCard({
                 <Label className="text-xs font-medium text-slate-600">Logistic Pack Type</Label>
                 <div className="max-w-[280px]">
                   <Select value={set.packType} onValueChange={(value) => onUpdatePackType(id, set.id, value)}>
-                    <SelectTrigger className="h-8 text-sm">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
