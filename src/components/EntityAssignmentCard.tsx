@@ -64,26 +64,6 @@ export default function EntityAssignmentCard({
                 )}
               </div>
 
-              {/* Pack type */}
-              <div className="mb-3 space-y-1.5">
-                <Label className="text-xs font-medium text-slate-600">Logistic Pack Type</Label>
-                <div className="max-w-[280px]">
-                  <Select value={set.packType} onValueChange={(value) => onUpdatePackType(id, set.id, value)}>
-                    <SelectTrigger className="h-8 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="single">Single</SelectItem>
-                      <SelectItem value="prepack">Prepack</SelectItem>
-                      <SelectItem value="multipack">Multipack</SelectItem>
-                      <SelectItem value="display">Display</SelectItem>
-                      <SelectItem value="retail-pack">Retail Pack</SelectItem>
-                      <SelectItem value="ecom-pack">Ecom Pack</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
               {/* Country groups */}
               <div className="mb-3 space-y-1.5">
                 <Label className="text-xs font-medium text-slate-600">Country Groups</Label>
@@ -137,6 +117,26 @@ export default function EntityAssignmentCard({
                       </button>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* Pack type */}
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-slate-600">Logistic Pack Type</Label>
+                <div className="max-w-[280px]">
+                  <Select value={set.packType} onValueChange={(value) => onUpdatePackType(id, set.id, value)}>
+                    <SelectTrigger className="h-8 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="single">Single</SelectItem>
+                      <SelectItem value="prepack">Prepack</SelectItem>
+                      <SelectItem value="multipack">Multipack</SelectItem>
+                      <SelectItem value="display">Display</SelectItem>
+                      <SelectItem value="retail-pack">Retail Pack</SelectItem>
+                      <SelectItem value="ecom-pack">Ecom Pack</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
