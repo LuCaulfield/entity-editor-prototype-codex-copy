@@ -47,10 +47,11 @@ export default function EntityAssignmentCard({
           );
 
           return (
-            <div key={set.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <div key={set.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div className="space-y-4">
               {/* Set header */}
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                   Set {index + 1}
                 </span>
                 {sets.length > 1 && (
@@ -64,9 +65,8 @@ export default function EntityAssignmentCard({
                 )}
               </div>
 
-              <div className="space-y-3">
               {/* Country groups */}
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label className="text-xs font-medium text-slate-600">Country Groups</Label>
                 <div className="flex flex-wrap gap-2">
                   {availableCountryGroups.map((group) => {
@@ -98,7 +98,7 @@ export default function EntityAssignmentCard({
               </div>
 
               {/* Colors */}
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label className="text-xs font-medium text-slate-600">Colors</Label>
                 <div className="flex flex-wrap gap-2">
                   {availableColors.map((color) => {
@@ -122,7 +122,7 @@ export default function EntityAssignmentCard({
               </div>
 
               {/* Pack type */}
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label className="text-xs font-medium text-slate-600">Logistic Pack Type</Label>
                 <div className="max-w-[280px]">
                   <Select value={set.packType} onValueChange={(value) => onUpdatePackType(id, set.id, value)}>
@@ -140,7 +140,7 @@ export default function EntityAssignmentCard({
                   </Select>
                 </div>
               </div>
-              </div>{/* end space-y-3 */}
+              </div>{/* end space-y-4 */}
             </div>
           );
         })}
