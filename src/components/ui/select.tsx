@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 type SelectContextValue = {
   value?: string;
   onValueChange?: (value: string) => void;
+  options?: SelectOption[];
 };
 
 type SelectOption = {
@@ -53,7 +54,7 @@ function Select({ value, onValueChange, children }: SelectProps) {
   const selectedLabel = options.find((option) => option.value === value)?.label ?? null;
 
   return (
-    <SelectContext.Provider value={{ value, onValueChange }}>
+    <SelectContext.Provider value={{ value, onValueChange, options }}>
       <SelectValueContext.Provider value={selectedLabel}>{children}</SelectValueContext.Provider>
     </SelectContext.Provider>
   );
@@ -62,7 +63,7 @@ function Select({ value, onValueChange, children }: SelectProps) {
 const SelectTrigger = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
   ({ className, children, ...props }, ref) => {
     const context = React.useContext(SelectContext);
-    const options = extractOptions(children);
+    const options = context.options ?? [];
 
     return (
       <select
