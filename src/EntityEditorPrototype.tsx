@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import StepperInput from "@/components/StepperInput";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { AlertCircle, Sparkles, Package2 } from "lucide-react";
@@ -215,50 +216,51 @@ export default function EntityEditorPrototype() {
               <Separator />
 
               {/* Parameters */}
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <div className="space-y-2">
-                  <Label className="block min-h-[3rem]">Total quantity</Label>
-                  <Input type="number" value={totalQty} readOnly disabled aria-readonly="true" />
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Total quantity</Label>
+                  <Input type="number" value={totalQty} readOnly disabled aria-readonly="true" className="text-center" />
                 </div>
-                <div className="space-y-2">
-                  <Label className="block min-h-[3rem]">Number of entities</Label>
-                  <Input
-                    type="number"
-                    min={1}
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Entities</Label>
+                  <StepperInput
                     value={entityCount}
-                    onChange={(e) => setEntityCount(Math.max(1, Number(e.target.value)))}
+                    onChange={(v) => setEntityCount(Math.max(1, v))}
+                    min={1}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="block min-h-[3rem]">Start week</Label>
-                  <Input
-                    type="number"
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Start week</Label>
+                  <StepperInput
                     value={startWeek}
-                    onChange={(e) => setStartWeek(Number(e.target.value))}
+                    onChange={setStartWeek}
+                    min={1}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="block min-h-[3rem]">Interval between entities (weeks)</Label>
-                  <Input
-                    type="number"
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Interval (weeks)</Label>
+                  <StepperInput
                     value={intervalWeeks}
-                    onChange={(e) => setIntervalWeeks(Number(e.target.value))}
+                    onChange={(v) => setIntervalWeeks(Math.max(1, v))}
+                    min={1}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Minimum qty per entity Retail</Label>
-                  <Input
-                    type="number"
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Min qty Retail</Label>
+                  <StepperInput
                     value={minQty}
-                    onChange={(e) => setMinQty(Number(e.target.value))}
+                    onChange={setMinQty}
+                    min={0}
+                    step={100}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Minimum qty per entity Ecom</Label>
-                  <Input
-                    type="number"
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Min qty Ecom</Label>
+                  <StepperInput
                     value={minQtyEcom}
-                    onChange={(e) => setMinQtyEcom(Number(e.target.value))}
+                    onChange={setMinQtyEcom}
+                    min={0}
+                    step={100}
                   />
                 </div>
               </div>
