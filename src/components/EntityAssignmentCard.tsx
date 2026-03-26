@@ -64,8 +64,9 @@ export default function EntityAssignmentCard({
                 )}
               </div>
 
+              <div className="space-y-3">
               {/* Country groups */}
-              <div className="mb-3 space-y-1.5">
+              <div className="space-y-1.5">
                 <Label className="text-xs font-medium text-slate-600">Country Groups</Label>
                 <div className="flex flex-wrap gap-2">
                   {availableCountryGroups.map((group) => {
@@ -139,6 +140,7 @@ export default function EntityAssignmentCard({
                   </Select>
                 </div>
               </div>
+              </div>{/* end space-y-3 */}
             </div>
           );
         })}
