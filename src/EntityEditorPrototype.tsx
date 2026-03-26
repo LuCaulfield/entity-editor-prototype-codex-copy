@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import StepperInput from "@/components/StepperInput";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Sparkles, Package2 } from "lucide-react";
+import { AlertCircle, Sparkles, Package2, LayoutList, Columns2 } from "lucide-react";
 
 import { type Entity } from "@/types";
 import {
@@ -69,6 +69,7 @@ export default function EntityEditorPrototype() {
   );
 
   const [message, setMessage] = useState("Entities generated from manual parameters.");
+  const [entityLayout, setEntityLayout] = useState<"list" | "grid">("list");
 
   // Sync setsConfig when entity count changes
   useEffect(() => {
@@ -267,13 +268,33 @@ export default function EntityEditorPrototype() {
 
               {/* Entity assignment cards */}
               <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div>
-                  <div className="text-sm font-semibold text-slate-900">Assign Country Groups per entity</div>
-                  <p className="text-sm text-slate-500">
-                    Each entity can have multiple sets — each set groups country groups with their own colors and pack type.
-                  </p>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-semibold text-slate-900">Assign Country Groups per entity</div>
+                    <p className="text-sm text-slate-500">
+                      Each entity can have multiple sets — each set groups country groups with their own colors and pack type.
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 rounded-lg border border-slate-200 bg-white p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setEntityLayout("list")}
+                      className={`rounded-md p-1.5 transition ${entityLayout === "list" ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600"}`}
+                      title="List view"
+                    >
+                      <LayoutList className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEntityLayout("grid")}
+                      className={`rounded-md p-1.5 transition ${entityLayout === "grid" ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600"}`}
+                      title="2-column view"
+                    >
+                      <Columns2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="grid gap-3">
+                <div className={entityLayout === "grid" ? "grid grid-cols-2 gap-3" : "grid gap-3"}>
                   {entityCards.map((card) => (
                     <EntityAssignmentCard
                       key={card.id}
