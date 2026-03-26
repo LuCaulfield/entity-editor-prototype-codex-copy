@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,24 +7,17 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { AlertCircle, Sparkles, Package2 } from "lucide-react";
 
+import { type Entity } from "@/types";
 import {
-  type Entity,
-  type CountryGroupAssignments,
-  type EntityColorSelections,
-  type EntityPackTypes,
-} from "@/types";
-import {
-  createCountryGroupAssignments,
-  createEntityColorSelections,
-  createEntityPackTypes,
-  normalizeCountryGroupAssignments,
-  normalizeEntityColorSelections,
-  normalizeEntityPackTypes,
-  applyCountryGroupAssignments,
-  applyEntityColorSelections,
-  applyEntityPackTypes,
-  buildAssignmentsFromEntities,
+  buildDefaultSetsConfig,
+  normalizeSetsConfig,
   makeGeneratedEntities,
+  addSet,
+  removeSet,
+  toggleSetCountryGroup,
+  toggleSetColor,
+  updateSetPackType,
+  getAllEntityCountryGroups,
 } from "@/lib/entities";
 import EntityAssignmentCard from "@/components/EntityAssignmentCard";
 import SummaryCard from "@/components/SummaryCard";
@@ -34,85 +27,62 @@ function round(n: number) {
   return Math.round(n);
 }
 
+const INITIAL_ENTITY_COUNT = 3;
+const INITIAL_PACK_TYPE = "retail-pack";
+const INITIAL_TOTAL_QTY = 39000;
+const INITIAL_START_WEEK = 41;
+const INITIAL_INTERVAL_WEEKS = 2;
+const INITIAL_RETAIL_PCT = 62;
+const INITIAL_ECOM_PCT = 38;
+const INITIAL_MIN_QTY = 9000;
+
 export default function EntityEditorPrototype() {
   const [mode, setMode] = useState<"manual" | "bi">("manual");
-  const [totalQty, setTotalQty] = useState(39000);
-  const [entityCount, setEntityCount] = useState(3);
-  const [startWeek, setStartWeek] = useState(41);
-  const [intervalWeeks, setIntervalWeeks] = useState(2);
-  const [retailPct, setRetailPct] = useState(62);
-  const [ecomPct, setEcomPct] = useState(38);
-  const [packType, setPackType] = useState("retail-pack");
-  const [minQty, setMinQty] = useState(9000);
-  const [minQtyEcom, setMinQtyEcom] = useState(9000);
-  const [countryGroupAssignments, setCountryGroupAssignments] = useState<CountryGroupAssignments>(
-    () => createCountryGroupAssignments(3)
+  const [totalQty] = useState(INITIAL_TOTAL_QTY);
+  const [entityCount, setEntityCount] = useState(INITIAL_ENTITY_COUNT);
+  const [startWeek, setStartWeek] = useState(INITIAL_START_WEEK);
+  const [intervalWeeks, setIntervalWeeks] = useState(INITIAL_INTERVAL_WEEKS);
+  const [retailPct, setRetailPct] = useState(INITIAL_RETAIL_PCT);
+  const [ecomPct, setEcomPct] = useState(INITIAL_ECOM_PCT);
+  const [packType] = useState(INITIAL_PACK_TYPE);
+  const [minQty, setMinQty] = useState(INITIAL_MIN_QTY);
+  const [minQtyEcom, setMinQtyEcom] = useState(INITIAL_MIN_QTY);
+
+  const [entitySetsConfig, setEntitySetsConfig] = useState<Record<number, ReturnType<typeof buildDefaultSetsConfig>[number]>>(
+    () => buildDefaultSetsConfig(INITIAL_ENTITY_COUNT, INITIAL_PACK_TYPE)
   );
-  const [entityColorSelections, setEntityColorSelections] = useState<EntityColorSelections>(
-    () => createEntityColorSelections(3)
-  );
-  const [entityPackTypes, setEntityPackTypes] = useState<EntityPackTypes>(
-    () => createEntityPackTypes(3, "retail-pack")
-  );
-  const previousEntityCountRef = useRef(3);
+
   const [entities, setEntities] = useState<Entity[]>(() =>
-    applyEntityPackTypes(
-      applyEntityColorSelections(
-        applyCountryGroupAssignments(
-          makeGeneratedEntities({
-            mode: "manual",
-            totalQty: 39000,
-            entityCount: 3,
-            startWeek: 41,
-            intervalWeeks: 2,
-            retailPct: 62,
-            ecomPct: 38,
-            packType: "retail-pack",
-            minQty: 9000,
-          }),
-          createCountryGroupAssignments(3)
-        ),
-        createEntityColorSelections(3)
-      ),
-      createEntityPackTypes(3, "retail-pack")
-    )
+    makeGeneratedEntities({
+      mode: "manual",
+      totalQty: INITIAL_TOTAL_QTY,
+      entityCount: INITIAL_ENTITY_COUNT,
+      startWeek: INITIAL_START_WEEK,
+      intervalWeeks: INITIAL_INTERVAL_WEEKS,
+      retailPct: INITIAL_RETAIL_PCT,
+      ecomPct: INITIAL_ECOM_PCT,
+      packType: INITIAL_PACK_TYPE,
+      minQty: INITIAL_MIN_QTY,
+      entitySetsConfig: buildDefaultSetsConfig(INITIAL_ENTITY_COUNT, INITIAL_PACK_TYPE),
+    })
   );
-  const [message, setMessage] = useState<string>("Entities generated from manual parameters.");
 
-  useEffect(() => {
-    setCountryGroupAssignments((prev) => {
-      if (entityCount === 1) return createCountryGroupAssignments(1);
-      if (previousEntityCountRef.current === 1 && entityCount === 2) return createCountryGroupAssignments(2);
-      return normalizeCountryGroupAssignments(prev, entityCount);
-    });
-    previousEntityCountRef.current = entityCount;
-  }, [entityCount]);
+  const [message, setMessage] = useState("Entities generated from manual parameters.");
 
+  // Sync setsConfig when entity count changes
   useEffect(() => {
-    setEntityColorSelections((prev) => normalizeEntityColorSelections(prev, entityCount));
-  }, [entityCount]);
-
-  useEffect(() => {
-    setEntityPackTypes((prev) => normalizeEntityPackTypes(prev, entityCount, packType));
+    setEntitySetsConfig((prev) => normalizeSetsConfig(prev, entityCount, packType));
   }, [entityCount, packType]);
 
+  // Sync sets from config into already-generated entities (live update)
   useEffect(() => {
     setEntities((prev) =>
-      applyCountryGroupAssignments(prev, normalizeCountryGroupAssignments(countryGroupAssignments, entityCount))
+      prev.map((e) => ({
+        ...e,
+        sets: entitySetsConfig[e.id] ?? e.sets,
+      }))
     );
-  }, [countryGroupAssignments, entityCount]);
-
-  useEffect(() => {
-    setEntities((prev) =>
-      applyEntityColorSelections(prev, normalizeEntityColorSelections(entityColorSelections, entityCount))
-    );
-  }, [entityColorSelections, entityCount]);
-
-  useEffect(() => {
-    setEntities((prev) =>
-      applyEntityPackTypes(prev, normalizeEntityPackTypes(entityPackTypes, entityCount, packType))
-    );
-  }, [entityPackTypes, entityCount, packType]);
+  }, [entitySetsConfig]);
 
   const totals = useMemo(() => {
     const qty = entities.reduce((a, e) => a + Number(e.qty || 0), 0);
@@ -121,45 +91,23 @@ export default function EntityEditorPrototype() {
     return { qty, validChannel, minViolation };
   }, [entities, retailPct, ecomPct]);
 
-  const entityAssignmentCards = useMemo(
-    () =>
-      Array.from({ length: entityCount }, (_, index) => {
-        const entityId = index + 1;
-        return {
-          id: entityId,
-          name: `Entity ${entityId}`,
-          colors: entityColorSelections[entityId] ?? [],
-          packType: entityPackTypes[entityId] ?? packType,
-          countryGroups: (Object.entries(countryGroupAssignments) as [string, number[]][])
-            .filter(([, ids]) => ids.includes(entityId))
-            .map(([group]) => group),
-        };
-      }),
-    [countryGroupAssignments, entityColorSelections, entityPackTypes, entityCount, packType]
-  );
-
   const previewEntities = useMemo<PreviewEntity[]>(
     () =>
-      entityAssignmentCards.map((entityCard, index) => {
-        const existingEntity = entities.find((entity) => entity.id === entityCard.id);
-        return {
-          id: entityCard.id,
-          name: entityCard.name,
-          qty: existingEntity?.qty ?? 0,
-          week: existingEntity?.week ?? startWeek + index * intervalWeeks,
-          packType: existingEntity?.packType ?? packType,
-          colors: existingEntity?.colors ?? [],
-          countryGroups: entityCard.countryGroups,
-          retailQty: round(((existingEntity?.qty ?? 0) * retailPct) / 100),
-          ecomQty: round(((existingEntity?.qty ?? 0) * ecomPct) / 100),
-          belowMin: (existingEntity?.qty ?? 0) < minQty,
-        };
-      }),
-    [entities, entityAssignmentCards, startWeek, intervalWeeks, packType, retailPct, ecomPct, minQty]
+      entities.map((entity) => ({
+        id: entity.id,
+        name: entity.name,
+        qty: entity.qty,
+        week: entity.week,
+        retailQty: round((entity.qty * retailPct) / 100),
+        ecomQty: round((entity.qty * ecomPct) / 100),
+        sets: entity.sets,
+        belowMin: entity.qty < minQty,
+      })),
+    [entities, retailPct, ecomPct, minQty]
   );
 
   const warningCount = useMemo(
-    () => previewEntities.filter((entity) => entity.belowMin).length + (totals.validChannel ? 0 : 1),
+    () => previewEntities.filter((e) => e.belowMin).length + (totals.validChannel ? 0 : 1),
     [previewEntities, totals.validChannel]
   );
 
@@ -168,7 +116,7 @@ export default function EntityEditorPrototype() {
       setMessage("Retail + E-commerce must equal 100%.");
       return;
     }
-    const next = applyCountryGroupAssignments(
+    setEntities(
       makeGeneratedEntities({
         mode: sourceMode,
         totalQty,
@@ -179,14 +127,8 @@ export default function EntityEditorPrototype() {
         ecomPct,
         packType,
         minQty,
-      }),
-      normalizeCountryGroupAssignments(countryGroupAssignments, entityCount)
-    );
-    setEntities(
-      applyEntityPackTypes(
-        applyEntityColorSelections(next, normalizeEntityColorSelections(entityColorSelections, entityCount)),
-        normalizeEntityPackTypes(entityPackTypes, entityCount, packType)
-      )
+        entitySetsConfig,
+      })
     );
     setMessage(
       sourceMode === "bi"
@@ -195,37 +137,42 @@ export default function EntityEditorPrototype() {
     );
   };
 
-  const updateAllEntities = (patch: Partial<Entity>) => {
-    setEntities((prev) => prev.map((e) => ({ ...e, ...patch })));
+  // --- Set handlers ---
+  const handleAddSet = (entityId: number) => {
+    setEntitySetsConfig((prev) => addSet(prev, entityId, packType));
   };
 
-  const toggleEntityCountryGroup = (entityId: number, group: string) => {
-    setEntities((prev) => {
-      const next = prev.map((entity) => {
-        if (entity.id !== entityId) return entity;
-        const nextGroups = entity.countryGroups.includes(group)
-          ? entity.countryGroups.filter((item) => item !== group)
-          : [...entity.countryGroups, group];
-        return { ...entity, countryGroups: nextGroups };
-      });
-      setCountryGroupAssignments(buildAssignmentsFromEntities(next));
-      return next;
-    });
+  const handleRemoveSet = (entityId: number, setId: number) => {
+    setEntitySetsConfig((prev) => removeSet(prev, entityId, setId));
   };
 
-  const toggleEntityColor = (entityId: number, color: string) => {
-    setEntityColorSelections((prev) => {
-      const current = prev[entityId] ?? [];
-      const nextColors = current.includes(color)
-        ? current.filter((item) => item !== color)
-        : [...current, color];
-      return { ...prev, [entityId]: nextColors };
-    });
+  const handleToggleCountryGroup = (entityId: number, setId: number, group: string) => {
+    setEntitySetsConfig((prev) => toggleSetCountryGroup(prev, entityId, setId, group));
   };
 
-  const updateEntityPackType = (entityId: number, nextPackType: string) => {
-    setEntityPackTypes((prev) => ({ ...prev, [entityId]: nextPackType }));
+  const handleToggleColor = (entityId: number, setId: number, color: string) => {
+    setEntitySetsConfig((prev) => toggleSetColor(prev, entityId, setId, color));
   };
+
+  const handleUpdateSetPackType = (entityId: number, setId: number, nextPackType: string) => {
+    setEntitySetsConfig((prev) => updateSetPackType(prev, entityId, setId, nextPackType));
+  };
+
+  // Build display cards from setsConfig (independent of generated entities)
+  const entityCards = useMemo(
+    () =>
+      Array.from({ length: entityCount }, (_, i) => {
+        const entityId = i + 1;
+        const sets = entitySetsConfig[entityId] ?? [];
+        return {
+          id: entityId,
+          name: `Entity ${entityId}`,
+          sets,
+          allCountryGroups: getAllEntityCountryGroups(sets),
+        };
+      }),
+    [entitySetsConfig, entityCount]
+  );
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
@@ -240,6 +187,7 @@ export default function EntityEditorPrototype() {
               <CardTitle className="text-2xl">Configure entity split before Split View</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Mode selector */}
               <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                 <div>
                   <Label className="text-sm font-medium">Working mode</Label>
@@ -266,6 +214,7 @@ export default function EntityEditorPrototype() {
 
               <Separator />
 
+              {/* Parameters */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div className="space-y-2">
                   <Label className="block min-h-[3rem]">Total quantity</Label>
@@ -301,11 +250,7 @@ export default function EntityEditorPrototype() {
                   <Input
                     type="number"
                     value={minQty}
-                    onChange={(e) => {
-                      const next = Number(e.target.value);
-                      setMinQty(next);
-                      updateAllEntities({ minQty: next });
-                    }}
+                    onChange={(e) => setMinQty(Number(e.target.value))}
                   />
                 </div>
                 <div className="space-y-2">
@@ -318,30 +263,33 @@ export default function EntityEditorPrototype() {
                 </div>
               </div>
 
+              {/* Entity assignment cards */}
               <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <div>
                   <div className="text-sm font-semibold text-slate-900">Assign Country Groups per entity</div>
                   <p className="text-sm text-slate-500">
-                    Combine country groups as much as possible to minimize the total number of orders.
+                    Each entity can have multiple sets — each set groups country groups with their own colors and pack type.
                   </p>
                 </div>
                 <div className="grid gap-3">
-                  {entityAssignmentCards.map((entity) => (
+                  {entityCards.map((card) => (
                     <EntityAssignmentCard
-                      key={entity.id}
-                      id={entity.id}
-                      name={entity.name}
-                      colors={entity.colors}
-                      packType={entity.packType}
-                      countryGroups={entity.countryGroups}
-                      onToggleCountryGroup={toggleEntityCountryGroup}
-                      onToggleColor={toggleEntityColor}
-                      onUpdatePackType={updateEntityPackType}
+                      key={card.id}
+                      id={card.id}
+                      name={card.name}
+                      sets={card.sets}
+                      defaultPackType={packType}
+                      onAddSet={handleAddSet}
+                      onRemoveSet={handleRemoveSet}
+                      onToggleCountryGroup={handleToggleCountryGroup}
+                      onToggleColor={handleToggleColor}
+                      onUpdatePackType={handleUpdateSetPackType}
                     />
                   ))}
                 </div>
               </div>
 
+              {/* Generate button */}
               <div className="flex flex-wrap gap-3">
                 <Button onClick={() => generateEntities(mode)}>
                   {mode === "bi" ? "Generate BI proposal" : "Generate entities"}
@@ -358,6 +306,7 @@ export default function EntityEditorPrototype() {
           </Card>
         </div>
 
+        {/* Right panel */}
         <div className="col-span-12 lg:col-span-3">
           <div className="sticky top-6 space-y-4">
             <SummaryCard
