@@ -217,7 +217,7 @@ export default function EntityEditorPrototype() {
               <Separator />
 
               {/* Parameters */}
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Total quantity</Label>
                   <Input type="number" value={totalQty} readOnly disabled aria-readonly="true" className="text-center" />
