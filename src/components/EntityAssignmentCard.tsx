@@ -17,7 +17,7 @@ type EntityAssignmentCardProps = {
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{children}</p>
+    <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">{children}</p>
   );
 }
 
@@ -35,11 +35,11 @@ export default function EntityAssignmentCard({
   const allAssignedGroups = getAllEntityCountryGroups(sets);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+    <div className="rounded-2xl border border-oa-border bg-white p-4 shadow-oa">
       {/* Header */}
       <div className="mb-3 flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
-        <div className="text-sm font-semibold text-slate-800">{name}</div>
-        <div className="text-xs text-slate-500">
+        <div className="text-sm font-bold text-black">{name}</div>
+        <div className="text-xs text-oa-gray-40">
           {allAssignedGroups.length ? allAssignedGroups.join(", ") : "No country groups assigned"}
         </div>
       </div>
@@ -52,11 +52,11 @@ export default function EntityAssignmentCard({
           );
 
           return (
-            <div key={set.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <div key={set.id} className="rounded-xl border border-oa-border bg-oa-gray-5 p-3">
               <div className="space-y-3">
                 {/* Set header */}
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <span className="text-xs font-bold uppercase tracking-wide text-oa-gray-70">
                     Set {index + 1}
                   </span>
                   {sets.length > 1 && (
@@ -83,18 +83,18 @@ export default function EntityAssignmentCard({
                           key={group}
                           type="button"
                           onClick={() => onToggleCountryGroup(id, set.id, group)}
-                          className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                             activeInThis
-                              ? "border-teal-500 bg-teal-500 text-white"
+                              ? "border-primary-50 bg-primary-50 text-white"
                               : takenByOther
-                              ? "border-slate-200 bg-slate-100 text-slate-400 hover:border-amber-400 hover:text-amber-600"
-                              : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
+                              ? "border-oa-border bg-white text-oa-gray-40 hover:border-primary-50 hover:text-primary-50"
+                              : "border-oa-border bg-white text-oa-gray-70 hover:border-primary-50 hover:text-primary-50"
                           }`}
                           title={takenByOther ? "Assigned to another set — click to move here" : undefined}
                         >
                           {group}
                           {takenByOther && !activeInThis && (
-                            <span className="ml-1 text-amber-500">↩</span>
+                            <span className="ml-1 text-oa-gray-40">↩</span>
                           )}
                         </button>
                       );
@@ -113,10 +113,10 @@ export default function EntityAssignmentCard({
                           key={color}
                           type="button"
                           onClick={() => onToggleColor(id, set.id, color)}
-                          className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                             active
-                              ? "border-slate-900 bg-slate-900 text-white"
-                              : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
+                              ? "border-oa-gray-70 bg-oa-gray-70 text-white"
+                              : "border-oa-border bg-white text-oa-gray-70 hover:border-oa-gray-70"
                           }`}
                         >
                           {color}
@@ -155,7 +155,7 @@ export default function EntityAssignmentCard({
       <button
         type="button"
         onClick={() => onAddSet(id)}
-        className="mt-2 w-full rounded-xl border border-dashed border-slate-300 py-2 text-sm text-slate-500 hover:border-teal-400 hover:text-teal-600 transition"
+        className="mt-2 w-full rounded-xl border border-dashed border-oa-border py-2 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
       >
         + Add set
       </button>

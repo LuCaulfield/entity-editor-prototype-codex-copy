@@ -177,22 +177,23 @@ export default function EntityEditorPrototype() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900">
-      <div className="bg-teal-500 px-6 py-4 text-white shadow-sm">
-        <div className="text-lg font-semibold">Ordering Application · Entity Editor Prototype</div>
+    <div className="min-h-screen bg-oa-gray-5 text-black">
+      {/* Top nav — matches Figma: h-14, primary teal, shadow */}
+      <div className="flex h-14 items-center bg-primary-50 px-6 shadow-oa">
+        <div className="text-base font-semibold text-white">Ordering Application</div>
       </div>
 
       <div className="mx-auto grid max-w-7xl grid-cols-12 gap-6 p-6">
         <div className="col-span-12 space-y-6 lg:col-span-9">
-          <Card className="rounded-2xl shadow-sm">
+          <Card className="shadow-oa">
             <CardHeader>
-              <CardTitle className="text-2xl">Configure entity split before Split View</CardTitle>
+              <CardTitle className="text-2xl font-bold">Configure entity split before Split View</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Mode selector */}
               <div className="flex items-center gap-4">
                 <div className="shrink-0">
-                  <Label className="text-sm font-medium">Working mode</Label>
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Working mode</Label>
                   <Tabs value={mode} onValueChange={(v) => setMode(v as "manual" | "bi")} className="mt-2">
                     <TabsList>
                       <TabsTrigger value="manual">Manual</TabsTrigger>
@@ -200,13 +201,13 @@ export default function EntityEditorPrototype() {
                     </TabsList>
                   </Tabs>
                 </div>
-                <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border bg-slate-50 px-4 py-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-oa-border bg-oa-gray-5 px-4 py-3">
                   {mode === "bi" ? (
-                    <Sparkles className="h-5 w-5 shrink-0 text-teal-600" />
+                    <Sparkles className="h-5 w-5 shrink-0 text-primary-50" />
                   ) : (
-                    <Package2 className="h-5 w-5 shrink-0 text-slate-500" />
+                    <Package2 className="h-5 w-5 shrink-0 text-oa-gray-40" />
                   )}
-                  <p className="min-w-0 text-sm text-slate-600">
+                  <p className="min-w-0 text-sm text-oa-gray-70">
                     {mode === "manual"
                       ? "Manual mode is the default. No BI recommendations are generated. Entities are created only from the parameters defined by the buyer."
                       : "BI mode proposes an editable starting split. The buyer must explicitly accept or modify the proposal."}
@@ -219,67 +220,45 @@ export default function EntityEditorPrototype() {
               {/* Parameters */}
               <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Total quantity</Label>
+                  <Label className="text-xs font-semibold text-oa-gray-40">Total quantity</Label>
                   <Input type="number" value={totalQty} readOnly disabled aria-readonly="true" className="text-center" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Entities</Label>
-                  <StepperInput
-                    value={entityCount}
-                    onChange={(v) => setEntityCount(Math.max(1, v))}
-                    min={1}
-                  />
+                  <Label className="text-xs font-semibold text-oa-gray-40">Entities</Label>
+                  <StepperInput value={entityCount} onChange={(v) => setEntityCount(Math.max(1, v))} min={1} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Start week</Label>
-                  <StepperInput
-                    value={startWeek}
-                    onChange={setStartWeek}
-                    min={1}
-                  />
+                  <Label className="text-xs font-semibold text-oa-gray-40">Start week</Label>
+                  <StepperInput value={startWeek} onChange={setStartWeek} min={1} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Interval (weeks)</Label>
-                  <StepperInput
-                    value={intervalWeeks}
-                    onChange={(v) => setIntervalWeeks(Math.max(1, v))}
-                    min={1}
-                  />
+                  <Label className="text-xs font-semibold text-oa-gray-40">Interval (weeks)</Label>
+                  <StepperInput value={intervalWeeks} onChange={(v) => setIntervalWeeks(Math.max(1, v))} min={1} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Min qty Retail</Label>
-                  <StepperInput
-                    value={minQty}
-                    onChange={setMinQty}
-                    min={0}
-                    step={100}
-                  />
+                  <Label className="text-xs font-semibold text-oa-gray-40">Min qty Retail</Label>
+                  <StepperInput value={minQty} onChange={setMinQty} min={0} step={100} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Min qty Ecom</Label>
-                  <StepperInput
-                    value={minQtyEcom}
-                    onChange={setMinQtyEcom}
-                    min={0}
-                    step={100}
-                  />
+                  <Label className="text-xs font-semibold text-oa-gray-40">Min qty Ecom</Label>
+                  <StepperInput value={minQtyEcom} onChange={setMinQtyEcom} min={0} step={100} />
                 </div>
               </div>
 
               {/* Entity assignment cards */}
-              <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="space-y-4 rounded-2xl border border-oa-border bg-oa-gray-5 p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="text-sm font-semibold text-slate-900">Assign Country Groups per entity</div>
-                    <p className="text-sm text-slate-500">
+                    <div className="text-sm font-bold text-black">Assign Country Groups per entity</div>
+                    <p className="text-sm text-oa-gray-40">
                       Each entity can have multiple sets — each set groups country groups with their own colors and pack type.
                     </p>
                   </div>
-                  <div className="flex shrink-0 rounded-lg border border-slate-200 bg-white p-0.5">
+                  <div className="flex shrink-0 rounded-lg border border-oa-border bg-white p-0.5">
                     <button
                       type="button"
                       onClick={() => setEntityLayout("list")}
-                      className={`rounded-md p-1.5 transition ${entityLayout === "list" ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600"}`}
+                      className={`rounded-md p-1.5 transition ${entityLayout === "list" ? "bg-oa-gray-5 text-black" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
                       title="List view"
                     >
                       <LayoutList className="h-4 w-4" />
@@ -287,7 +266,7 @@ export default function EntityEditorPrototype() {
                     <button
                       type="button"
                       onClick={() => setEntityLayout("grid")}
-                      className={`rounded-md p-1.5 transition ${entityLayout === "grid" ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600"}`}
+                      className={`rounded-md p-1.5 transition ${entityLayout === "grid" ? "bg-oa-gray-5 text-black" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
                       title="2-column view"
                     >
                       <Columns2 className="h-4 w-4" />
@@ -320,8 +299,8 @@ export default function EntityEditorPrototype() {
               </div>
 
               {message && (
-                <div className="flex items-start gap-2 rounded-xl border bg-amber-50 p-3 text-sm text-slate-700">
-                  <AlertCircle className="mt-0.5 h-4 w-4 text-amber-600" />
+                <div className="flex items-start gap-2 rounded-xl border border-oa-border bg-white p-3 text-sm text-oa-gray-70">
+                  <AlertCircle className="mt-0.5 h-4 w-4 text-oa-gray-40" />
                   <span>{message}</span>
                 </div>
               )}

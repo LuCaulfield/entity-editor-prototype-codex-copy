@@ -29,7 +29,7 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     <div
       ref={ref}
       role="tablist"
-      className={cn("inline-flex rounded-xl bg-slate-100 p-1 text-slate-600", className)}
+      className={cn("inline-flex rounded-xl bg-oa-gray-5 p-1 text-oa-gray-70", className)}
       {...props}
     />
   )
@@ -53,8 +53,8 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         aria-selected={active}
         data-state={active ? "active" : "inactive"}
         className={cn(
-          "rounded-lg px-3 py-1.5 text-sm font-medium transition",
-          active ? "bg-white text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900",
+          "rounded-lg px-3 py-1.5 text-sm font-semibold transition",
+          active ? "bg-white text-black shadow-sm" : "text-oa-gray-40 hover:text-oa-gray-70",
           className
         )}
         onClick={(event) => {

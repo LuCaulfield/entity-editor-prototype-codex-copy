@@ -22,33 +22,35 @@ export default function SummaryCard({
   minViolation,
 }: SummaryCardProps) {
   return (
-    <Card className="rounded-2xl shadow-sm">
+    <Card className="shadow-oa">
       <CardHeader>
         <CardTitle className="text-lg">Summary</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 text-sm">
         <div className="flex items-center justify-between">
-          <span>Total order</span>
+          <span className="text-oa-gray-70">Total order</span>
           <strong>{totalQty.toLocaleString()}</strong>
         </div>
         <div className="flex items-center justify-between">
-          <span>Entities</span>
+          <span className="text-oa-gray-70">Entities</span>
           <strong>{entityCount}</strong>
         </div>
         <div className="flex items-center justify-between">
-          <span>Assigned qty</span>
+          <span className="text-oa-gray-70">Assigned qty</span>
           <strong>{assignedQty.toLocaleString()}</strong>
         </div>
         <div className="flex items-center justify-between">
-          <span>Retail / E-com</span>
+          <span className="text-oa-gray-70">Retail / E-com</span>
           <strong>
             {retailPct}% / {ecomPct}%
           </strong>
         </div>
         <Separator />
         <div
-          className={`rounded-xl p-3 ${
-            assignedQty === totalQty ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+          className={`rounded-xl p-3 text-sm font-medium ${
+            assignedQty === totalQty
+              ? "bg-primary-10 text-primary-80"
+              : "bg-amber-50 text-amber-700"
           }`}
         >
           {assignedQty === totalQty
@@ -56,12 +58,12 @@ export default function SummaryCard({
             : `Difference vs total: ${(totalQty - assignedQty).toLocaleString()} pcs`}
         </div>
         {!validChannel && (
-          <div className="rounded-xl bg-rose-50 p-3 text-rose-700">
+          <div className="rounded-xl bg-rose-50 p-3 text-sm font-medium text-rose-700">
             Retail + E-commerce must equal 100%.
           </div>
         )}
         {minViolation && (
-          <div className="rounded-xl bg-rose-50 p-3 text-rose-700">
+          <div className="rounded-xl bg-rose-50 p-3 text-sm font-medium text-rose-700">
             At least one entity is below the minimum quantity.
           </div>
         )}

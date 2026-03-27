@@ -31,22 +31,22 @@ const PACK_TYPE_LABELS: Record<string, string> = {
 
 export default function LivePreview({ totalQty, warningCount, previewEntities }: LivePreviewProps) {
   return (
-    <Card className="rounded-[2rem] border-0 bg-white shadow-sm">
+    <Card className="shadow-oa">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-3 text-2xl font-semibold">
-          <Eye className="h-6 w-6" />
+        <CardTitle className="flex items-center gap-3 text-2xl font-bold">
+          <Eye className="h-6 w-6 text-primary-50" />
           Live preview
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-3xl bg-slate-50 p-4">
-            <div className="text-sm text-slate-500">Total</div>
-            <div className="mt-2 text-3xl font-semibold text-slate-900">{totalQty.toLocaleString()}</div>
+          <div className="rounded-2xl bg-oa-gray-5 p-4">
+            <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Total</div>
+            <div className="mt-2 text-3xl font-bold text-black">{totalQty.toLocaleString()}</div>
           </div>
-          <div className="rounded-3xl bg-rose-50 p-4">
-            <div className="text-sm text-slate-500">Warnings</div>
-            <div className="mt-2 text-3xl font-semibold text-rose-600">{warningCount}</div>
+          <div className="rounded-2xl bg-rose-50 p-4">
+            <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Warnings</div>
+            <div className="mt-2 text-3xl font-bold text-rose-600">{warningCount}</div>
           </div>
         </div>
 
@@ -54,16 +54,16 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
           {previewEntities.map((entity) => (
             <div
               key={`preview-${entity.id}`}
-              className={`rounded-3xl border p-4 ${
-                entity.belowMin ? "border-rose-300 bg-white" : "border-slate-200 bg-slate-50/50"
+              className={`rounded-2xl border p-4 ${
+                entity.belowMin ? "border-rose-300 bg-white" : "border-oa-border bg-oa-gray-5"
               }`}
             >
               {/* Entity header */}
               <div className="flex items-start justify-between gap-4">
-                <div className="text-lg font-semibold text-slate-900">{entity.name}</div>
-                <div className="text-2xl font-semibold text-slate-900">{entity.qty.toLocaleString()}</div>
+                <div className="text-sm font-bold text-black">{entity.name}</div>
+                <div className="text-xl font-bold text-black">{entity.qty.toLocaleString()}</div>
               </div>
-              <div className="mt-1 text-sm text-slate-500">
+              <div className="mt-1 text-xs text-oa-gray-40">
                 Week {entity.week} · Retail {entity.retailQty.toLocaleString()} / Ecom {entity.ecomQty.toLocaleString()}
               </div>
 
@@ -71,22 +71,22 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
               {entity.sets.length > 0 && (
                 <div className="mt-3 space-y-2">
                   {entity.sets.map((set, index) => (
-                    <div key={set.id} className="rounded-xl bg-white border border-slate-200 px-3 py-2">
+                    <div key={set.id} className="rounded-xl border border-oa-border bg-white px-3 py-2">
                       <div className="mb-1 flex items-center gap-2">
-                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        <span className="text-xs font-bold uppercase tracking-wide text-oa-gray-70">
                           Set {index + 1}
                         </span>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-oa-gray-40">
                           {PACK_TYPE_LABELS[set.packType] ?? set.packType}
                         </span>
                       </div>
-                      <div className="text-xs text-slate-600">
-                        <span className="font-medium">Groups: </span>
-                        {set.countryGroups.length ? set.countryGroups.join(", ") : <span className="text-slate-400">none</span>}
+                      <div className="text-xs text-oa-gray-70">
+                        <span className="font-semibold">Groups: </span>
+                        {set.countryGroups.length ? set.countryGroups.join(", ") : <span className="text-oa-gray-40">none</span>}
                       </div>
-                      <div className="text-xs text-slate-600">
-                        <span className="font-medium">Colors: </span>
-                        {set.colors.length ? set.colors.join(", ") : <span className="text-slate-400">none</span>}
+                      <div className="text-xs text-oa-gray-70">
+                        <span className="font-semibold">Colors: </span>
+                        {set.colors.length ? set.colors.join(", ") : <span className="text-oa-gray-40">none</span>}
                       </div>
                     </div>
                   ))}
@@ -94,7 +94,7 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
               )}
 
               {entity.belowMin && (
-                <div className="mt-3 flex items-center gap-2 text-sm font-medium text-rose-600">
+                <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-rose-600">
                   <AlertCircle className="h-4 w-4" />
                   Below minimum ({entity.qty.toLocaleString()} &lt; min)
                 </div>

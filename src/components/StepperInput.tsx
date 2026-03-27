@@ -30,12 +30,12 @@ export default function StepperInput({
   };
 
   return (
-    <div className="flex items-stretch rounded-xl border border-slate-300 bg-white shadow-sm overflow-hidden focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-200 transition">
+    <div className="flex items-stretch rounded-xl border border-oa-border bg-white shadow-sm overflow-hidden focus-within:border-primary-50 focus-within:ring-2 focus-within:ring-primary-10 transition">
       <button
         type="button"
         onClick={decrement}
         disabled={disabled || (min !== undefined && value <= min)}
-        className="px-2.5 text-slate-400 hover:bg-slate-50 hover:text-slate-700 disabled:opacity-30 transition text-base select-none"
+        className="px-2.5 text-oa-gray-40 hover:bg-oa-gray-5 hover:text-primary-50 disabled:opacity-30 transition text-base select-none"
         tabIndex={-1}
       >
         −
@@ -45,13 +45,13 @@ export default function StepperInput({
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         disabled={disabled}
-        className="flex-1 min-w-0 w-full text-center text-sm text-slate-900 bg-transparent outline-none py-2 disabled:text-slate-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        className="flex-1 min-w-0 w-full text-center text-sm text-black bg-transparent outline-none py-2 disabled:text-oa-gray-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
       <button
         type="button"
         onClick={increment}
         disabled={disabled || (max !== undefined && value >= max)}
-        className="px-2.5 text-slate-400 hover:bg-slate-50 hover:text-slate-700 disabled:opacity-30 transition text-base select-none"
+        className="px-2.5 text-oa-gray-40 hover:bg-oa-gray-5 hover:text-primary-50 disabled:opacity-30 transition text-base select-none"
         tabIndex={-1}
       >
         +
