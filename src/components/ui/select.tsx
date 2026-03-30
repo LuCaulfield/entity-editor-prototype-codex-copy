@@ -70,7 +70,7 @@ const SelectTrigger = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
         <select
           ref={ref}
           className={cn(
-            "flex h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 py-2 pr-9 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200",
+            "flex h-9 w-full appearance-none rounded-xl border border-oa-border bg-white px-3 py-1.5 pr-9 text-sm text-black shadow-sm outline-none transition focus:border-primary-50 focus:ring-2 focus:ring-primary-10",
             className
           )}
           value={context.value}
@@ -84,12 +84,13 @@ const SelectTrigger = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
           ))}
         </select>
         <svg
-          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"
+          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
+          width="10"
+          height="6"
+          viewBox="0 0 10 6"
         >
-          <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+          <polygon points="0,0 10,0 5,6" fill="#000000" />
         </svg>
       </div>
     );

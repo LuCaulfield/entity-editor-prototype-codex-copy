@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import StepperInput from "@/components/StepperInput";
+import WeekDatePicker from "@/components/WeekDatePicker";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { AlertCircle, Sparkles, Package2, LayoutList, Columns2 } from "lucide-react";
@@ -28,6 +29,7 @@ function round(n: number) {
   return Math.round(n);
 }
 
+
 const INITIAL_ENTITY_COUNT = 3;
 const INITIAL_PACK_TYPE = "retail-pack";
 const INITIAL_TOTAL_QTY = 39000;
@@ -47,10 +49,15 @@ export default function EntityEditorPrototype() {
   const [ecomPct, setEcomPct] = useState(INITIAL_ECOM_PCT);
   const [packType] = useState(INITIAL_PACK_TYPE);
   const [minQty, setMinQty] = useState(INITIAL_MIN_QTY);
-  const [minQtyEcom, setMinQtyEcom] = useState(INITIAL_MIN_QTY);
 
   const [entitySetsConfig, setEntitySetsConfig] = useState<Record<number, ReturnType<typeof buildDefaultSetsConfig>[number]>>(
     () => buildDefaultSetsConfig(INITIAL_ENTITY_COUNT, INITIAL_PACK_TYPE)
+  );
+
+  const [entityWeeks, setEntityWeeks] = useState<Record<number, number>>(() =>
+    Object.fromEntries(
+      Array.from({ length: INITIAL_ENTITY_COUNT }, (_, i) => [i + 1, INITIAL_START_WEEK + i * INITIAL_INTERVAL_WEEKS])
+    )
   );
 
   const [entities, setEntities] = useState<Entity[]>(() =>
@@ -70,11 +77,38 @@ export default function EntityEditorPrototype() {
 
   const [message, setMessage] = useState("Entities generated from manual parameters.");
   const [entityLayout, setEntityLayout] = useState<"list" | "grid">("list");
+  const [weekScheduleMode, setWeekScheduleMode] = useState<"interval" | "individual">("interval");
 
   // Sync setsConfig when entity count changes
   useEffect(() => {
     setEntitySetsConfig((prev) => normalizeSetsConfig(prev, entityCount, packType));
   }, [entityCount, packType]);
+
+  // Recalculate entity weeks when global params change (interval mode) or entity count changes
+  useEffect(() => {
+    if (weekScheduleMode === "interval") {
+      setEntityWeeks(
+        Object.fromEntries(
+          Array.from({ length: entityCount }, (_, i) => [i + 1, startWeek + i * intervalWeeks])
+        )
+      );
+    } else {
+      // In individual mode, only add/remove entries for entity count changes, keep existing weeks
+      setEntityWeeks((prev) => {
+        const next: Record<number, number> = {};
+        for (let i = 1; i <= entityCount; i++) {
+          next[i] = prev[i] ?? startWeek + (i - 1) * intervalWeeks;
+        }
+        return next;
+      });
+    }
+  }, [startWeek, intervalWeeks, entityCount, weekScheduleMode]);
+
+  const handleSetEntityWeek = (entityId: number, week: number) => {
+    setEntityWeeks((prev) => ({ ...prev, [entityId]: week }));
+    // Entity 1 drives the global "Planned delivery date" in individual mode
+    if (entityId === 1) setStartWeek(week);
+  };
 
   // Sync sets from config into already-generated entities (live update)
   useEffect(() => {
@@ -169,11 +203,12 @@ export default function EntityEditorPrototype() {
         return {
           id: entityId,
           name: `Entity ${entityId}`,
+          week: entityWeeks[entityId] ?? startWeek + i * intervalWeeks,
           sets,
           allCountryGroups: getAllEntityCountryGroups(sets),
         };
       }),
-    [entitySetsConfig, entityCount]
+    [entitySetsConfig, entityCount, entityWeeks, startWeek, intervalWeeks]
   );
 
   return (
@@ -190,87 +225,89 @@ export default function EntityEditorPrototype() {
               <CardTitle className="text-2xl font-bold">Configure entity split before Split View</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Mode selector */}
-              <div className="flex items-center gap-4">
-                <div className="shrink-0">
-                  <Label className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Working mode</Label>
-                  <Tabs value={mode} onValueChange={(v) => setMode(v as "manual" | "bi")} className="mt-2">
-                    <TabsList>
-                      <TabsTrigger value="manual">Manual</TabsTrigger>
-                      <TabsTrigger value="bi">BI recommendations</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </div>
-                <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-oa-border bg-oa-gray-5 px-4 py-3">
-                  {mode === "bi" ? (
-                    <Sparkles className="h-5 w-5 shrink-0 text-primary-50" />
-                  ) : (
-                    <Package2 className="h-5 w-5 shrink-0 text-oa-gray-40" />
-                  )}
-                  <p className="min-w-0 text-sm text-oa-gray-70">
-                    {mode === "manual"
-                      ? "Manual mode is the default. No BI recommendations are generated. Entities are created only from the parameters defined by the buyer."
-                      : "BI mode proposes an editable starting split. The buyer must explicitly accept or modify the proposal."}
-                  </p>
-                </div>
-              </div>
 
               <Separator />
 
-              {/* Parameters */}
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-oa-gray-40">Total quantity</Label>
-                  <Input type="number" value={totalQty} readOnly disabled aria-readonly="true" className="text-center" />
+              {/* Parameters — single compact row */}
+              <div className="flex flex-wrap items-start gap-3">
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">Total quantity</span>
+                  <div className="w-32">
+                    <Input type="number" value={totalQty} readOnly disabled aria-readonly="true" className="text-center" />
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-oa-gray-40">Entities</Label>
-                  <StepperInput value={entityCount} onChange={(v) => setEntityCount(Math.max(1, v))} min={1} />
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">Entities</span>
+                  <div className="w-32">
+                    <StepperInput value={entityCount} onChange={(v) => setEntityCount(Math.max(1, v))} min={1} />
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-oa-gray-40">Start week</Label>
-                  <StepperInput value={startWeek} onChange={setStartWeek} min={1} />
+                <div className="w-px self-stretch bg-oa-border" />
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">Delivery dates</span>
+                  <div className="flex h-9 items-center rounded-xl border border-oa-border bg-white p-0.5 text-xs shadow-sm">
+                    <button
+                      type="button"
+                      onClick={() => setWeekScheduleMode("interval")}
+                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "interval" ? "bg-primary-50 text-white" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                    >
+                      Default
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWeekScheduleMode("individual")}
+                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "individual" ? "bg-primary-50 text-white" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                    >
+                      Individual
+                    </button>
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-oa-gray-40">Interval (weeks)</Label>
-                  <StepperInput value={intervalWeeks} onChange={(v) => setIntervalWeeks(Math.max(1, v))} min={1} />
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">Planned delivery date</span>
+                  <WeekDatePicker week={startWeek} onChange={setStartWeek} />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-oa-gray-40">Min qty Retail</Label>
-                  <StepperInput value={minQty} onChange={setMinQty} min={0} step={100} />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-oa-gray-40">Min qty Ecom</Label>
-                  <StepperInput value={minQtyEcom} onChange={setMinQtyEcom} min={0} step={100} />
+                <div className="space-y-1">
+                  <span className={`text-xs font-semibold ${weekScheduleMode === "individual" ? "text-oa-gray-40/40" : "text-oa-gray-40"}`}>Weeks between</span>
+                  <div className="w-32">
+                    {weekScheduleMode === "individual" ? (
+                      <div className="flex items-stretch overflow-hidden rounded-xl border border-oa-border bg-white shadow-sm">
+                        <span className="flex flex-1 items-center justify-center py-2 text-sm font-semibold text-primary-80">~</span>
+                      </div>
+                    ) : (
+                      <StepperInput value={intervalWeeks} onChange={(v) => setIntervalWeeks(Math.max(1, v))} min={1} />
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Entity assignment cards */}
               <div className="space-y-4 rounded-2xl border border-oa-border bg-oa-gray-5 p-4">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <div className="text-sm font-bold text-black">Assign Country Groups per entity</div>
                     <p className="text-sm text-oa-gray-40">
                       Each entity can have multiple sets — each set groups country groups with their own colors and pack type.
                     </p>
                   </div>
-                  <div className="flex shrink-0 rounded-lg border border-oa-border bg-white p-0.5">
-                    <button
-                      type="button"
-                      onClick={() => setEntityLayout("list")}
-                      className={`rounded-md p-1.5 transition ${entityLayout === "list" ? "bg-oa-gray-5 text-black" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
-                      title="List view"
-                    >
-                      <LayoutList className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEntityLayout("grid")}
-                      className={`rounded-md p-1.5 transition ${entityLayout === "grid" ? "bg-oa-gray-5 text-black" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
-                      title="2-column view"
-                    >
-                      <Columns2 className="h-4 w-4" />
-                    </button>
+                  <div className="flex shrink-0 items-center gap-3">
+                    <div className="flex rounded-lg border border-oa-border bg-white p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setEntityLayout("list")}
+                        className={`rounded-md p-1.5 transition ${entityLayout === "list" ? "bg-oa-gray-5 text-black" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                        title="List view"
+                      >
+                        <LayoutList className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEntityLayout("grid")}
+                        className={`rounded-md p-1.5 transition ${entityLayout === "grid" ? "bg-oa-gray-5 text-black" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                        title="2-column view"
+                      >
+                        <Columns2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div className={entityLayout === "grid" ? "grid grid-cols-2 gap-3" : "grid gap-3"}>
@@ -279,6 +316,9 @@ export default function EntityEditorPrototype() {
                       key={card.id}
                       id={card.id}
                       name={card.name}
+                      week={card.week}
+                      weekEditable={weekScheduleMode === "individual"}
+                      onWeekChange={(w) => handleSetEntityWeek(card.id, w)}
                       sets={card.sets}
                       defaultPackType={packType}
                       onAddSet={handleAddSet}
@@ -286,6 +326,10 @@ export default function EntityEditorPrototype() {
                       onToggleCountryGroup={handleToggleCountryGroup}
                       onToggleColor={handleToggleColor}
                       onUpdatePackType={handleUpdateSetPackType}
+                      {...(card.id === 1 ? {
+                        minQtyRetail: minQty,
+                        onMinQtyRetailChange: setMinQty,
+                      } : {})}
                     />
                   ))}
                 </div>
@@ -311,15 +355,6 @@ export default function EntityEditorPrototype() {
         {/* Right panel */}
         <div className="col-span-12 lg:col-span-3">
           <div className="sticky top-6 space-y-4">
-            <SummaryCard
-              totalQty={totalQty}
-              entityCount={entityCount}
-              assignedQty={totals.qty}
-              retailPct={retailPct}
-              ecomPct={ecomPct}
-              validChannel={totals.validChannel}
-              minViolation={totals.minViolation}
-            />
             <LivePreview
               totalQty={totalQty}
               warningCount={warningCount}

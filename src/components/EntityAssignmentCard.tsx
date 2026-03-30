@@ -1,11 +1,15 @@
 import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { availableColors, availableCountryGroups, type EntitySet } from "@/types";
-import { getAllEntityCountryGroups } from "@/lib/entities";
+import StepperInput from "@/components/StepperInput";
+import WeekDatePicker from "@/components/WeekDatePicker";
 
 type EntityAssignmentCardProps = {
   id: number;
   name: string;
+  week: number;
+  weekEditable: boolean;
+  onWeekChange: (week: number) => void;
   sets: EntitySet[];
   defaultPackType: string;
   onAddSet: (entityId: number) => void;
@@ -13,6 +17,8 @@ type EntityAssignmentCardProps = {
   onToggleCountryGroup: (entityId: number, setId: number, group: string) => void;
   onToggleColor: (entityId: number, setId: number, color: string) => void;
   onUpdatePackType: (entityId: number, setId: number, packType: string) => void;
+  minQtyRetail?: number;
+  onMinQtyRetailChange?: (v: number) => void;
 };
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -24,6 +30,9 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 export default function EntityAssignmentCard({
   id,
   name,
+  week,
+  weekEditable,
+  onWeekChange,
   sets,
   defaultPackType,
   onAddSet,
@@ -31,19 +40,40 @@ export default function EntityAssignmentCard({
   onToggleCountryGroup,
   onToggleColor,
   onUpdatePackType,
+  minQtyRetail,
+  onMinQtyRetailChange,
 }: EntityAssignmentCardProps) {
-  const allAssignedGroups = getAllEntityCountryGroups(sets);
-
   return (
     <div className="rounded-2xl border border-oa-border bg-white p-4 shadow-oa">
       {/* Header */}
-      <div className="mb-3 flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
-        <div className="text-sm font-bold text-black">{name}</div>
-        <div className="text-xs text-oa-gray-40">
-          {allAssignedGroups.length ? allAssignedGroups.join(", ") : "No country groups assigned"}
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          {id === 1 && (
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-white">
+              A
+            </div>
+          )}
+          <div className="text-sm font-bold text-black">{name}</div>
+        </div>
+        <div className="flex flex-wrap justify-end items-end gap-3">
+          {minQtyRetail !== undefined && onMinQtyRetailChange && (
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
+              <div className="w-36">
+                <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
+              </div>
+            </div>
+          )}
+          <div className="space-y-1">
+            <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
+              Planned delivery date
+            </p>
+            <div className={!weekEditable ? "pointer-events-none opacity-40" : ""}>
+              <WeekDatePicker week={week} onChange={onWeekChange} />
+            </div>
+          </div>
         </div>
       </div>
-
       {/* Sets */}
       <div className="space-y-2">
         {sets.map((set, index) => {
@@ -52,7 +82,7 @@ export default function EntityAssignmentCard({
           );
 
           return (
-            <div key={set.id} className="rounded-xl border border-oa-border bg-oa-gray-5 p-3">
+            <div key={set.id} className="rounded-xl border border-oa-border bg-white p-3">
               <div className="space-y-3">
                 {/* Set header */}
                 <div className="flex items-center justify-between">
@@ -128,7 +158,7 @@ export default function EntityAssignmentCard({
 
                 {/* Pack type */}
                 <div className="space-y-1.5">
-                  <FieldLabel>Logistic Pack Type</FieldLabel>
+                  <FieldLabel>Pack type</FieldLabel>
                   <div className="max-w-[280px]">
                     <Select value={set.packType} onValueChange={(value) => onUpdatePackType(id, set.id, value)}>
                       <SelectTrigger>

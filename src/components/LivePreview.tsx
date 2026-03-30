@@ -39,13 +39,13 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-oa-gray-5 p-4">
+        <div className="grid grid-cols-3 gap-3">
+          <div className="col-span-2 rounded-2xl bg-oa-gray-5 p-4">
             <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Total</div>
             <div className="mt-2 text-3xl font-bold text-black">{totalQty.toLocaleString()}</div>
           </div>
-          <div className="rounded-2xl bg-rose-50 p-4">
-            <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Warnings</div>
+          <div className="col-span-1 rounded-2xl bg-rose-50 p-4">
+            <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Warn</div>
             <div className="mt-2 text-3xl font-bold text-rose-600">{warningCount}</div>
           </div>
         </div>
@@ -64,7 +64,7 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
                 <div className="text-xl font-bold text-black">{entity.qty.toLocaleString()}</div>
               </div>
               <div className="mt-1 text-xs text-oa-gray-40">
-                Week {entity.week} · Retail {entity.retailQty.toLocaleString()} / Ecom {entity.ecomQty.toLocaleString()}
+                Planned delivery date: week {entity.week} · Retail {entity.retailQty.toLocaleString()} / Ecom {entity.ecomQty.toLocaleString()}
               </div>
 
               {/* Sets */}
@@ -86,7 +86,11 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
                       </div>
                       <div className="text-xs text-oa-gray-70">
                         <span className="font-semibold">Colors: </span>
-                        {set.colors.length ? set.colors.join(", ") : <span className="text-oa-gray-40">none</span>}
+                        {set.colors.length ? (() => {
+                          const totalColors = entity.sets.reduce((sum, s) => sum + s.colors.length, 0);
+                          const qtyPerColor = totalColors > 0 ? Math.round(entity.qty / totalColors) : 0;
+                          return set.colors.map((c) => `${c} (${qtyPerColor.toLocaleString()})`).join(", ");
+                        })() : <span className="text-oa-gray-40">none</span>}
                       </div>
                     </div>
                   ))}

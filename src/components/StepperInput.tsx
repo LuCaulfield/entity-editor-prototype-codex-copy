@@ -30,7 +30,7 @@ export default function StepperInput({
   };
 
   return (
-    <div className="flex items-stretch rounded-xl border border-oa-border bg-white shadow-sm overflow-hidden focus-within:border-primary-50 focus-within:ring-2 focus-within:ring-primary-10 transition">
+    <div className="flex h-9 items-stretch rounded-xl border border-oa-border bg-white shadow-sm overflow-hidden focus-within:border-primary-50 focus-within:ring-2 focus-within:ring-primary-10 transition">
       <button
         type="button"
         onClick={decrement}
