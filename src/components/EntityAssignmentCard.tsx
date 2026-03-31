@@ -163,7 +163,7 @@ export default function EntityAssignmentCard({
         <button
           type="button"
           onClick={() => onAddSet(id)}
-          className="flex items-center justify-center self-start rounded-xl border border-dashed border-oa-border px-4 py-2 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
+          className="flex items-center justify-center rounded-xl border border-dashed border-oa-border px-4 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
         >
           + Add set
         </button>
