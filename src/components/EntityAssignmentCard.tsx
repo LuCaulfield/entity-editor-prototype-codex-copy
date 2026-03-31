@@ -77,7 +77,7 @@ export default function EntityAssignmentCard({
           {minQtyRetail !== undefined && onMinQtyRetailChange && (
             <div className="space-y-1">
               <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
-              <div className="w-36">
+              <div className="w-40">
                 <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
               </div>
             </div>
@@ -86,7 +86,7 @@ export default function EntityAssignmentCard({
             <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
               Planned delivery date
             </p>
-            <div className={!weekEditable ? "pointer-events-none opacity-40" : ""}>
+            <div className={`w-40 ${!weekEditable ? "pointer-events-none opacity-40" : ""}`}>
               <WeekDatePicker week={week} onChange={onWeekChange} />
             </div>
           </div>
