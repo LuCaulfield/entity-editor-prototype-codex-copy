@@ -11,6 +11,7 @@ export type PreviewEntity = {
   retailQty: number;
   ecomQty: number;
   sets: EntitySet[];
+  packType: string;
   belowMin: boolean;
 };
 
@@ -64,7 +65,7 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
                 <div className="text-xl font-bold text-black">{entity.qty.toLocaleString()}</div>
               </div>
               <div className="mt-1 text-xs text-oa-gray-40">
-                Planned delivery date: week {entity.week} · Retail {entity.retailQty.toLocaleString()} / Ecom {entity.ecomQty.toLocaleString()}
+                Week {entity.week} · {PACK_TYPE_LABELS[entity.packType] ?? entity.packType} · Retail {entity.retailQty.toLocaleString()} / Ecom {entity.ecomQty.toLocaleString()}
               </div>
 
               {/* Sets */}
@@ -75,9 +76,6 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
                       <div className="mb-1 flex items-center gap-2">
                         <span className="text-xs font-bold uppercase tracking-wide text-oa-gray-70">
                           Set {index + 1}
-                        </span>
-                        <span className="text-xs text-oa-gray-40">
-                          {PACK_TYPE_LABELS[set.packType] ?? set.packType}
                         </span>
                       </div>
                       <div className="text-xs text-oa-gray-70">

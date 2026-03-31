@@ -48,12 +48,11 @@ function defaultCountryGroupsForEntity(entityId: number, entityCount: number): s
   return availableCountryGroups.filter((g) => (assignments[g] ?? []).includes(entityId));
 }
 
-export function createDefaultSet(entityId: number, entityCount: number, packType: string): EntitySet {
+export function createDefaultSet(entityId: number, entityCount: number): EntitySet {
   return {
     id: 1,
     countryGroups: defaultCountryGroupsForEntity(entityId, entityCount),
     colors: defaultColorsForEntity(entityId),
-    packType,
   };
 }
 
@@ -65,13 +64,14 @@ export function makeGeneratedEntities(params: {
   intervalWeeks: number;
   retailPct: number;
   ecomPct: number;
-  packType: string;
+  entityPackTypes: Record<number, string>;
+  defaultPackType: string;
   minQty: number;
   entitySetsConfig: Record<number, EntitySet[]>;
 }): Entity[] {
   const {
     mode, totalQty, entityCount, startWeek, intervalWeeks,
-    retailPct, ecomPct, packType, minQty, entitySetsConfig,
+    retailPct, ecomPct, entityPackTypes, defaultPackType, minQty, entitySetsConfig,
   } = params;
 
   const ratios = buildRatios(mode, entityCount);
@@ -91,35 +91,35 @@ export function makeGeneratedEntities(params: {
       retailPct,
       ecomPct,
       minQty,
+      packType: entityPackTypes[entityId] ?? defaultPackType,
       packMixEnabled: true,
       prepackPct: 100,
       multipackPct: 0,
       prepackLargePct: 100,
       multipackLargePct: 0,
-      sets: entitySetsConfig[entityId] ?? [createDefaultSet(entityId, entityCount, packType)],
+      sets: entitySetsConfig[entityId] ?? [createDefaultSet(entityId, entityCount)],
     };
   });
 }
 
 // --- EntitySetsConfig helpers ---
 
-export function buildDefaultSetsConfig(entityCount: number, packType: string): Record<number, EntitySet[]> {
+export function buildDefaultSetsConfig(entityCount: number): Record<number, EntitySet[]> {
   return Object.fromEntries(
     Array.from({ length: entityCount }, (_, i) => {
       const entityId = i + 1;
-      return [entityId, [createDefaultSet(entityId, entityCount, packType)]];
+      return [entityId, [createDefaultSet(entityId, entityCount)]];
     })
   );
 }
 
 export function normalizeSetsConfig(
   prev: Record<number, EntitySet[]>,
-  entityCount: number,
-  packType: string
+  entityCount: number
 ): Record<number, EntitySet[]> {
   const next: Record<number, EntitySet[]> = {};
   for (let i = 1; i <= entityCount; i++) {
-    next[i] = prev[i] ?? [createDefaultSet(i, entityCount, packType)];
+    next[i] = prev[i] ?? [createDefaultSet(i, entityCount)];
   }
   return next;
 }
@@ -128,14 +128,13 @@ export function normalizeSetsConfig(
 
 export function addSet(
   config: Record<number, EntitySet[]>,
-  entityId: number,
-  packType: string
+  entityId: number
 ): Record<number, EntitySet[]> {
   const current = config[entityId] ?? [];
   const newId = current.length > 0 ? Math.max(...current.map((s) => s.id)) + 1 : 1;
   return {
     ...config,
-    [entityId]: [...current, { id: newId, countryGroups: [], colors: [], packType }],
+    [entityId]: [...current, { id: newId, countryGroups: [], colors: [] }],
   };
 }
 
@@ -189,17 +188,6 @@ export function toggleSetColor(
     const has = s.colors.includes(color);
     return { ...s, colors: has ? s.colors.filter((c) => c !== color) : [...s.colors, color] };
   });
-  return { ...config, [entityId]: updated };
-}
-
-export function updateSetPackType(
-  config: Record<number, EntitySet[]>,
-  entityId: number,
-  setId: number,
-  packType: string
-): Record<number, EntitySet[]> {
-  const current = config[entityId] ?? [];
-  const updated = current.map((s) => (s.id === setId ? { ...s, packType } : s));
   return { ...config, [entityId]: updated };
 }
 

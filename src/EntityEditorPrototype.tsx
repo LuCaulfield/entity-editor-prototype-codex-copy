@@ -18,7 +18,6 @@ import {
   removeSet,
   toggleSetCountryGroup,
   toggleSetColor,
-  updateSetPackType,
   getAllEntityCountryGroups,
 } from "@/lib/entities";
 import EntityAssignmentCard from "@/components/EntityAssignmentCard";
@@ -47,11 +46,16 @@ export default function EntityEditorPrototype() {
   const [intervalWeeks, setIntervalWeeks] = useState(INITIAL_INTERVAL_WEEKS);
   const [retailPct, setRetailPct] = useState(INITIAL_RETAIL_PCT);
   const [ecomPct, setEcomPct] = useState(INITIAL_ECOM_PCT);
-  const [packType] = useState(INITIAL_PACK_TYPE);
   const [minQty, setMinQty] = useState(INITIAL_MIN_QTY);
 
+  const [entityPackTypes, setEntityPackTypes] = useState<Record<number, string>>(() =>
+    Object.fromEntries(
+      Array.from({ length: INITIAL_ENTITY_COUNT }, (_, i) => [i + 1, INITIAL_PACK_TYPE])
+    )
+  );
+
   const [entitySetsConfig, setEntitySetsConfig] = useState<Record<number, ReturnType<typeof buildDefaultSetsConfig>[number]>>(
-    () => buildDefaultSetsConfig(INITIAL_ENTITY_COUNT, INITIAL_PACK_TYPE)
+    () => buildDefaultSetsConfig(INITIAL_ENTITY_COUNT)
   );
 
   const [entityWeeks, setEntityWeeks] = useState<Record<number, number>>(() =>
@@ -69,9 +73,12 @@ export default function EntityEditorPrototype() {
       intervalWeeks: INITIAL_INTERVAL_WEEKS,
       retailPct: INITIAL_RETAIL_PCT,
       ecomPct: INITIAL_ECOM_PCT,
-      packType: INITIAL_PACK_TYPE,
+      entityPackTypes: Object.fromEntries(
+        Array.from({ length: INITIAL_ENTITY_COUNT }, (_, i) => [i + 1, INITIAL_PACK_TYPE])
+      ),
+      defaultPackType: INITIAL_PACK_TYPE,
       minQty: INITIAL_MIN_QTY,
-      entitySetsConfig: buildDefaultSetsConfig(INITIAL_ENTITY_COUNT, INITIAL_PACK_TYPE),
+      entitySetsConfig: buildDefaultSetsConfig(INITIAL_ENTITY_COUNT),
     })
   );
 
@@ -79,10 +86,17 @@ export default function EntityEditorPrototype() {
   const [entityLayout, setEntityLayout] = useState<"list" | "grid">("list");
   const [weekScheduleMode, setWeekScheduleMode] = useState<"interval" | "individual">("interval");
 
-  // Sync setsConfig when entity count changes
+  // Sync setsConfig and packTypes when entity count changes
   useEffect(() => {
-    setEntitySetsConfig((prev) => normalizeSetsConfig(prev, entityCount, packType));
-  }, [entityCount, packType]);
+    setEntitySetsConfig((prev) => normalizeSetsConfig(prev, entityCount));
+    setEntityPackTypes((prev) => {
+      const next: Record<number, string> = {};
+      for (let i = 1; i <= entityCount; i++) {
+        next[i] = prev[i] ?? INITIAL_PACK_TYPE;
+      }
+      return next;
+    });
+  }, [entityCount]);
 
   // Recalculate entity weeks when global params change (interval mode) or entity count changes
   useEffect(() => {
@@ -116,9 +130,10 @@ export default function EntityEditorPrototype() {
       prev.map((e) => ({
         ...e,
         sets: entitySetsConfig[e.id] ?? e.sets,
+        packType: entityPackTypes[e.id] ?? e.packType,
       }))
     );
-  }, [entitySetsConfig]);
+  }, [entitySetsConfig, entityPackTypes]);
 
   const totals = useMemo(() => {
     const qty = entities.reduce((a, e) => a + Number(e.qty || 0), 0);
@@ -137,6 +152,7 @@ export default function EntityEditorPrototype() {
         retailQty: round((entity.qty * retailPct) / 100),
         ecomQty: round((entity.qty * ecomPct) / 100),
         sets: entity.sets,
+        packType: entity.packType,
         belowMin: entity.qty < minQty,
       })),
     [entities, retailPct, ecomPct, minQty]
@@ -161,7 +177,8 @@ export default function EntityEditorPrototype() {
         intervalWeeks,
         retailPct,
         ecomPct,
-        packType,
+        entityPackTypes,
+        defaultPackType: INITIAL_PACK_TYPE,
         minQty,
         entitySetsConfig,
       })
@@ -175,7 +192,7 @@ export default function EntityEditorPrototype() {
 
   // --- Set handlers ---
   const handleAddSet = (entityId: number) => {
-    setEntitySetsConfig((prev) => addSet(prev, entityId, packType));
+    setEntitySetsConfig((prev) => addSet(prev, entityId));
   };
 
   const handleRemoveSet = (entityId: number, setId: number) => {
@@ -190,8 +207,8 @@ export default function EntityEditorPrototype() {
     setEntitySetsConfig((prev) => toggleSetColor(prev, entityId, setId, color));
   };
 
-  const handleUpdateSetPackType = (entityId: number, setId: number, nextPackType: string) => {
-    setEntitySetsConfig((prev) => updateSetPackType(prev, entityId, setId, nextPackType));
+  const handleUpdateEntityPackType = (entityId: number, packType: string) => {
+    setEntityPackTypes((prev) => ({ ...prev, [entityId]: packType }));
   };
 
   // Build display cards from setsConfig (independent of generated entities)
@@ -204,11 +221,12 @@ export default function EntityEditorPrototype() {
           id: entityId,
           name: `Entity ${entityId}`,
           week: entityWeeks[entityId] ?? startWeek + i * intervalWeeks,
+          packType: entityPackTypes[entityId] ?? INITIAL_PACK_TYPE,
           sets,
           allCountryGroups: getAllEntityCountryGroups(sets),
         };
       }),
-    [entitySetsConfig, entityCount, entityWeeks, startWeek, intervalWeeks]
+    [entitySetsConfig, entityPackTypes, entityCount, entityWeeks, startWeek, intervalWeeks]
   );
 
   return (
@@ -286,7 +304,7 @@ export default function EntityEditorPrototype() {
                   <div>
                     <div className="text-sm font-bold text-black">Assign Country Groups per entity</div>
                     <p className="text-sm text-oa-gray-40">
-                      Each entity can have multiple sets — each set groups country groups with their own colors and pack type.
+                      Each entity can have multiple sets — each set groups country groups with their own colors.
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
@@ -319,13 +337,13 @@ export default function EntityEditorPrototype() {
                       week={card.week}
                       weekEditable={weekScheduleMode === "individual"}
                       onWeekChange={(w) => handleSetEntityWeek(card.id, w)}
+                      packType={card.packType}
+                      onUpdatePackType={handleUpdateEntityPackType}
                       sets={card.sets}
-                      defaultPackType={packType}
                       onAddSet={handleAddSet}
                       onRemoveSet={handleRemoveSet}
                       onToggleCountryGroup={handleToggleCountryGroup}
                       onToggleColor={handleToggleColor}
-                      onUpdatePackType={handleUpdateSetPackType}
                       {...(card.id === 1 ? {
                         minQtyRetail: minQty,
                         onMinQtyRetailChange: setMinQty,

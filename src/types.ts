@@ -2,7 +2,6 @@ export type EntitySet = {
   id: number;
   countryGroups: string[];
   colors: string[];
-  packType: string;
 };
 
 export type Entity = {
@@ -13,6 +12,7 @@ export type Entity = {
   retailPct: number;
   ecomPct: number;
   minQty: number;
+  packType: string;
   packMixEnabled: boolean;
   prepackPct: number;
   multipackPct: number;

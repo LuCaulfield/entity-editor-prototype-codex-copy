@@ -10,13 +10,13 @@ type EntityAssignmentCardProps = {
   week: number;
   weekEditable: boolean;
   onWeekChange: (week: number) => void;
+  packType: string;
+  onUpdatePackType: (entityId: number, packType: string) => void;
   sets: EntitySet[];
-  defaultPackType: string;
   onAddSet: (entityId: number) => void;
   onRemoveSet: (entityId: number, setId: number) => void;
   onToggleCountryGroup: (entityId: number, setId: number, group: string) => void;
   onToggleColor: (entityId: number, setId: number, color: string) => void;
-  onUpdatePackType: (entityId: number, setId: number, packType: string) => void;
   minQtyRetail?: number;
   onMinQtyRetailChange?: (v: number) => void;
 };
@@ -33,13 +33,13 @@ export default function EntityAssignmentCard({
   week,
   weekEditable,
   onWeekChange,
+  packType,
+  onUpdatePackType,
   sets,
-  defaultPackType,
   onAddSet,
   onRemoveSet,
   onToggleCountryGroup,
   onToggleColor,
-  onUpdatePackType,
   minQtyRetail,
   onMinQtyRetailChange,
 }: EntityAssignmentCardProps) {
@@ -64,6 +64,24 @@ export default function EntityAssignmentCard({
               </div>
             </div>
           )}
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
+            <div className="w-40">
+              <Select value={packType} onValueChange={(value) => onUpdatePackType(id, value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="single">Single</SelectItem>
+                  <SelectItem value="prepack">Prepack</SelectItem>
+                  <SelectItem value="multipack">Multipack</SelectItem>
+                  <SelectItem value="display">Display</SelectItem>
+                  <SelectItem value="retail-pack">Retail Pack</SelectItem>
+                  <SelectItem value="ecom-pack">Ecom Pack</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div className="space-y-1">
             <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
               Planned delivery date
@@ -153,26 +171,6 @@ export default function EntityAssignmentCard({
                         </button>
                       );
                     })}
-                  </div>
-                </div>
-
-                {/* Pack type */}
-                <div className="space-y-1.5">
-                  <FieldLabel>Pack type</FieldLabel>
-                  <div className="max-w-[280px]">
-                    <Select value={set.packType} onValueChange={(value) => onUpdatePackType(id, set.id, value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="single">Single</SelectItem>
-                        <SelectItem value="prepack">Prepack</SelectItem>
-                        <SelectItem value="multipack">Multipack</SelectItem>
-                        <SelectItem value="display">Display</SelectItem>
-                        <SelectItem value="retail-pack">Retail Pack</SelectItem>
-                        <SelectItem value="ecom-pack">Ecom Pack</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
                 </div>
               </div>
