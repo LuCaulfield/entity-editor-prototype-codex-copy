@@ -75,14 +75,14 @@ export default function EntityAssignmentCard({
         </div>
       </div>
       {/* Sets */}
-      <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
         {sets.map((set, index) => {
           const groupsInOtherSets = new Set(
             sets.filter((s) => s.id !== set.id).flatMap((s) => s.countryGroups)
           );
 
           return (
-            <div key={set.id} className="rounded-xl border border-oa-border bg-white p-3">
+            <div key={set.id} className="flex-1 min-w-[200px] rounded-xl border border-oa-border bg-white p-3">
               <div className="space-y-3">
                 {/* Set header */}
                 <div className="flex items-center justify-between">
