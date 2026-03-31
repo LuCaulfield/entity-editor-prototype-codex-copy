@@ -281,7 +281,7 @@ export default function EntityEditorPrototype() {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-oa-gray-40">Planned delivery date</span>
+                  <span className="text-xs font-semibold text-oa-gray-40">First planned delivery</span>
                   <WeekDatePicker week={startWeek} onChange={setStartWeek} />
                 </div>
                 <div className="space-y-1">
