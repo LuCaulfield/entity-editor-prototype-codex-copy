@@ -249,10 +249,6 @@ export default function EntityEditorPrototype() {
               {/* Parameters — single compact row */}
               <div className="flex flex-wrap items-start gap-3">
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-oa-gray-40">Planned delivery date</span>
-                  <WeekDatePicker week={startWeek} onChange={setStartWeek} />
-                </div>
-                <div className="space-y-1">
                   <span className="text-xs font-semibold text-oa-gray-40">Total quantity</span>
                   <div className="w-32">
                     <Input type="number" value={totalQty} readOnly disabled aria-readonly="true" className="text-center" />
@@ -265,6 +261,10 @@ export default function EntityEditorPrototype() {
                   </div>
                 </div>
                 <div className="w-px self-stretch bg-oa-border" />
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">Planned delivery date</span>
+                  <WeekDatePicker week={startWeek} onChange={setStartWeek} />
+                </div>
                 <div className="space-y-1">
                   <span className="text-xs font-semibold text-oa-gray-40">Delivery dates</span>
                   <div className="flex h-9 items-center rounded-xl border border-oa-border bg-white p-0.5 text-xs shadow-sm">
