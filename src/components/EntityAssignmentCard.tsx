@@ -177,15 +177,16 @@ export default function EntityAssignmentCard({
             </div>
           );
         })}
-        {/* Add set — inline with sets */}
-        <button
-          type="button"
-          onClick={() => onAddSet(id)}
-          className="flex items-center justify-center rounded-xl border border-dashed border-oa-border px-4 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
-        >
-          + Add set
-        </button>
       </div>
+
+      {/* Add set — below sets */}
+      <button
+        type="button"
+        onClick={() => onAddSet(id)}
+        className="mt-2 w-full rounded-xl border border-dashed border-oa-border py-2 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
+      >
+        + Add set
+      </button>
 
     </div>
   );
