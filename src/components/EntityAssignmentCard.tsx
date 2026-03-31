@@ -46,7 +46,7 @@ export default function EntityAssignmentCard({
   return (
     <div className="rounded-2xl border border-oa-border bg-white p-4 shadow-oa">
       {/* Header */}
-      <div className="mb-4 space-y-3">
+      <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           {id === 1 && (
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-white">
@@ -55,7 +55,7 @@ export default function EntityAssignmentCard({
           )}
           <div className="text-sm font-bold text-black">{name}</div>
         </div>
-        <div className="flex flex-wrap items-end gap-3">
+        <div className="flex flex-wrap justify-end items-end gap-3">
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
             <div className="w-40">
@@ -86,7 +86,7 @@ export default function EntityAssignmentCard({
             <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
               Planned delivery date
             </p>
-            <div className={`w-40 ${!weekEditable ? "pointer-events-none opacity-40" : ""}`}>
+            <div className={!weekEditable ? "pointer-events-none opacity-40" : ""}>
               <WeekDatePicker week={week} onChange={onWeekChange} />
             </div>
           </div>
