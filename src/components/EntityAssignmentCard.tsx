@@ -65,24 +65,6 @@ export default function EntityAssignmentCard({
             </div>
           )}
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
-            <div className="w-40">
-              <Select value={packType} onValueChange={(value) => onUpdatePackType(id, value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="single">Single</SelectItem>
-                  <SelectItem value="prepack">Prepack</SelectItem>
-                  <SelectItem value="multipack">Multipack</SelectItem>
-                  <SelectItem value="display">Display</SelectItem>
-                  <SelectItem value="retail-pack">Retail Pack</SelectItem>
-                  <SelectItem value="ecom-pack">Ecom Pack</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="space-y-1">
             <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
               Planned delivery date
             </p>
@@ -187,6 +169,26 @@ export default function EntityAssignmentCard({
       >
         + Add set
       </button>
+
+      {/* Pack type — entity level */}
+      <div className="mt-3 space-y-1.5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
+        <div className="max-w-[280px]">
+          <Select value={packType} onValueChange={(value) => onUpdatePackType(id, value)}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="single">Single</SelectItem>
+              <SelectItem value="prepack">Prepack</SelectItem>
+              <SelectItem value="multipack">Multipack</SelectItem>
+              <SelectItem value="display">Display</SelectItem>
+              <SelectItem value="retail-pack">Retail Pack</SelectItem>
+              <SelectItem value="ecom-pack">Ecom Pack</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
     </div>
   );
 }
