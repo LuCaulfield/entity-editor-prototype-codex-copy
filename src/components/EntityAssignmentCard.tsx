@@ -55,7 +55,7 @@ export default function EntityAssignmentCard({
           )}
           <div className="text-sm font-bold text-black">{name}</div>
         </div>
-        <div className="flex flex-wrap justify-end items-end gap-3">
+        <div className="flex flex-col items-end gap-2">
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
             <div className="w-40">
