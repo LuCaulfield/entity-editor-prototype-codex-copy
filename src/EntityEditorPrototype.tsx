@@ -344,6 +344,7 @@ export default function EntityEditorPrototype() {
                       onRemoveSet={handleRemoveSet}
                       onToggleCountryGroup={handleToggleCountryGroup}
                       onToggleColor={handleToggleColor}
+                      compact={entityLayout === "grid"}
                       {...(card.id === 1 ? {
                         minQtyRetail: minQty,
                         onMinQtyRetailChange: setMinQty,

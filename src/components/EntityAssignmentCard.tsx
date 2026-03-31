@@ -19,6 +19,7 @@ type EntityAssignmentCardProps = {
   onToggleColor: (entityId: number, setId: number, color: string) => void;
   minQtyRetail?: number;
   onMinQtyRetailChange?: (v: number) => void;
+  compact?: boolean;
 };
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -42,6 +43,7 @@ export default function EntityAssignmentCard({
   onToggleColor,
   minQtyRetail,
   onMinQtyRetailChange,
+  compact = false,
 }: EntityAssignmentCardProps) {
   return (
     <div className="rounded-2xl border border-oa-border bg-white p-4 shadow-oa">
@@ -55,7 +57,7 @@ export default function EntityAssignmentCard({
           )}
           <div className="text-sm font-bold text-black">{name}</div>
         </div>
-        <div className="flex flex-row items-end gap-3">
+        <div className={`flex items-end gap-3 ${compact ? "flex-col" : "flex-row"}`}>
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
             <div className="w-40">
