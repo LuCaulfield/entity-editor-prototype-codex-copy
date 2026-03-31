@@ -56,14 +56,6 @@ export default function EntityAssignmentCard({
           <div className="text-sm font-bold text-black">{name}</div>
         </div>
         <div className="flex flex-wrap justify-end items-end gap-3">
-          {minQtyRetail !== undefined && onMinQtyRetailChange && (
-            <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
-              <div className="w-36">
-                <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
-              </div>
-            </div>
-          )}
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
             <div className="w-40">
@@ -82,6 +74,14 @@ export default function EntityAssignmentCard({
               </Select>
             </div>
           </div>
+          {minQtyRetail !== undefined && onMinQtyRetailChange && (
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
+              <div className="w-36">
+                <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
+              </div>
+            </div>
+          )}
           <div className="space-y-1">
             <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
               Planned delivery date
