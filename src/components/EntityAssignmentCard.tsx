@@ -74,7 +74,7 @@ export default function EntityAssignmentCard({
           </div>
         </div>
       </div>
-      {/* Sets */}
+      {/* Sets + Add set button inline */}
       <div className="flex flex-wrap gap-2">
         {sets.map((set, index) => {
           const groupsInOtherSets = new Set(
@@ -159,16 +159,15 @@ export default function EntityAssignmentCard({
             </div>
           );
         })}
+        {/* Add set — inline with sets */}
+        <button
+          type="button"
+          onClick={() => onAddSet(id)}
+          className="flex min-w-[120px] flex-1 items-center justify-center rounded-xl border border-dashed border-oa-border py-3 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
+        >
+          + Add set
+        </button>
       </div>
-
-      {/* Add set */}
-      <button
-        type="button"
-        onClick={() => onAddSet(id)}
-        className="mt-2 w-full rounded-xl border border-dashed border-oa-border py-2 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
-      >
-        + Add set
-      </button>
 
       {/* Pack type — entity level */}
       <div className="mt-3 space-y-1.5">
