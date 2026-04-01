@@ -59,6 +59,23 @@ export default function EntityAssignmentCard({
         </div>
         <div className={`flex items-end gap-3 ${compact ? "flex-col" : "flex-row"}`}>
           <div className="space-y-1">
+            <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
+              Planned delivery date
+            </p>
+            <div className={!weekEditable ? "pointer-events-none opacity-40" : ""}>
+              <WeekDatePicker week={week} onChange={onWeekChange} />
+            </div>
+          </div>
+          {!compact && <div className="w-px self-stretch bg-oa-border" />}
+          {minQtyRetail !== undefined && onMinQtyRetailChange && (
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
+              <div className="w-40">
+                <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
+              </div>
+            </div>
+          )}
+          <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
             <div className="w-40">
               <Select value={packType} onValueChange={(value) => onUpdatePackType(id, value)}>
@@ -74,23 +91,6 @@ export default function EntityAssignmentCard({
                   <SelectItem value="ecom-pack">Ecom Pack</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-          {!compact && <div className="w-px self-stretch bg-oa-border" />}
-          {minQtyRetail !== undefined && onMinQtyRetailChange && (
-            <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
-              <div className="w-40">
-                <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
-              </div>
-            </div>
-          )}
-          <div className="space-y-1">
-            <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
-              Planned delivery date
-            </p>
-            <div className={!weekEditable ? "pointer-events-none opacity-40" : ""}>
-              <WeekDatePicker week={week} onChange={onWeekChange} />
             </div>
           </div>
         </div>
