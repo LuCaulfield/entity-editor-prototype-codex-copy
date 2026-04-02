@@ -55,7 +55,7 @@ export default function EntityAssignmentCard({
               A
             </div>
           )}
-          <div className="text-sm font-bold text-black">{name}</div>
+          <div className="text-sm font-bold text-oa-text">{name}</div>
         </div>
         <div className={`flex items-end gap-3 ${compact ? "flex-col" : "flex-row"}`}>
           <div className="space-y-1">

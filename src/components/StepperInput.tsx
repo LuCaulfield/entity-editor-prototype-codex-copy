@@ -30,7 +30,7 @@ export default function StepperInput({
   };
 
   return (
-    <div className="flex h-9 items-stretch rounded-xl border border-oa-border bg-white shadow-sm overflow-hidden focus-within:border-primary-50 focus-within:ring-2 focus-within:ring-primary-10 transition">
+    <div className="flex h-9 items-stretch rounded-xl border border-oa-control bg-white shadow-sm overflow-hidden focus-within:border-primary-50 focus-within:ring-2 focus-within:ring-primary-10 transition">
       <button
         type="button"
         onClick={decrement}
@@ -45,7 +45,7 @@ export default function StepperInput({
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         disabled={disabled}
-        className="flex-1 min-w-0 w-full text-center text-sm text-black bg-transparent outline-none py-2 disabled:text-oa-gray-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        className="flex-1 min-w-0 w-full text-center text-sm text-oa-text bg-transparent outline-none py-2 disabled:text-oa-text-mid [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
       <button
         type="button"

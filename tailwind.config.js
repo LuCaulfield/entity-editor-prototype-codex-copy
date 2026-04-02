@@ -18,6 +18,9 @@ export default {
           70: '#4A4A4A',
         },
         'oa-border': '#E0E0E0',
+        'oa-text': 'rgba(0,0,0,0.87)',
+        'oa-text-mid': 'rgba(0,0,0,0.54)',
+        'oa-control': 'rgba(0,0,0,0.42)',
       },
       boxShadow: {
         oa: '0px 1px 2px rgba(0,0,0,0.24), 0px 2px 12px rgba(0,0,0,0.08)',

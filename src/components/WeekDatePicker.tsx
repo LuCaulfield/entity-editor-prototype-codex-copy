@@ -80,9 +80,9 @@ export default function WeekDatePicker({ week, onChange }: WeekDatePickerProps) 
       <button
         type="button"
         onClick={() => { setViewDate(anchorDate); setIsOpen(!isOpen); }}
-        className="flex h-9 items-center gap-2 rounded-xl border border-oa-border bg-white px-3 text-sm shadow-sm transition hover:border-primary-50 focus:border-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-10 whitespace-nowrap"
+        className="flex h-9 items-center gap-2 rounded-xl border border-oa-control bg-white px-3 text-sm shadow-sm transition hover:border-primary-50 focus:border-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-10 whitespace-nowrap"
       >
-        <span className="text-black">{displayDate}</span>
+        <span className="text-oa-text">{displayDate}</span>
         <span className="rounded-md bg-primary-10 px-1.5 py-0.5 text-xs font-bold text-primary-80">
           W{week}
         </span>
@@ -98,13 +98,13 @@ export default function WeekDatePicker({ week, onChange }: WeekDatePickerProps) 
             <button
               type="button"
               onClick={() => setViewDate(new Date(year, month - 1, 1))}
-              className="rounded-lg px-2 py-1 text-oa-gray-40 hover:bg-oa-gray-5 hover:text-black"
+              className="rounded-lg px-2 py-1 text-oa-gray-40 hover:bg-oa-gray-5 hover:text-oa-text"
             >‹</button>
             <span className="text-sm font-semibold">{MONTH_NAMES[month]} {year}</span>
             <button
               type="button"
               onClick={() => setViewDate(new Date(year, month + 1, 1))}
-              className="rounded-lg px-2 py-1 text-oa-gray-40 hover:bg-oa-gray-5 hover:text-black"
+              className="rounded-lg px-2 py-1 text-oa-gray-40 hover:bg-oa-gray-5 hover:text-oa-text"
             >›</button>
           </div>
 
@@ -146,8 +146,8 @@ export default function WeekDatePicker({ week, onChange }: WeekDatePickerProps) 
                                 : inSelectedWeek
                                 ? `bg-primary-10 text-primary-80 hover:bg-primary-50 hover:text-white ${isWednesday ? "font-black text-sm" : "font-medium"}`
                                 : isWednesday
-                                ? "font-black text-sm text-black hover:bg-oa-gray-5"
-                                : "font-medium text-black hover:bg-oa-gray-5"
+                                ? "font-black text-sm text-oa-text hover:bg-oa-gray-5"
+                                : "font-medium text-oa-text hover:bg-oa-gray-5"
                             }`}
                           >
                             {day.getDate()}

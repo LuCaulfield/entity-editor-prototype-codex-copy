@@ -230,7 +230,7 @@ export default function EntityEditorPrototype() {
   );
 
   return (
-    <div className="min-h-screen bg-oa-gray-5 text-black">
+    <div className="min-h-screen bg-oa-gray-5 text-oa-text">
       {/* Top nav — matches Figma: h-14, primary teal, shadow */}
       <div className="flex h-14 items-center bg-primary-50 px-6 shadow-oa">
         <div className="text-base font-semibold text-white">Ordering Application</div>
@@ -302,7 +302,7 @@ export default function EntityEditorPrototype() {
               <div className="space-y-4 rounded-2xl border border-oa-border bg-oa-gray-5 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <div className="text-sm font-bold text-black">Assign Country Groups per entity</div>
+                    <div className="text-sm font-bold text-oa-text">Assign Country Groups per entity</div>
                     <p className="text-sm text-oa-gray-40">
                       Each entity can have multiple sets — each set groups country groups with their own colors.
                     </p>
@@ -312,7 +312,7 @@ export default function EntityEditorPrototype() {
                       <button
                         type="button"
                         onClick={() => setEntityLayout("list")}
-                        className={`rounded-md p-1.5 transition ${entityLayout === "list" ? "bg-oa-gray-5 text-black" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                        className={`rounded-md p-1.5 transition ${entityLayout === "list" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
                         title="List view"
                       >
                         <LayoutList className="h-4 w-4" />
@@ -320,7 +320,7 @@ export default function EntityEditorPrototype() {
                       <button
                         type="button"
                         onClick={() => setEntityLayout("grid")}
-                        className={`rounded-md p-1.5 transition ${entityLayout === "grid" ? "bg-oa-gray-5 text-black" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                        className={`rounded-md p-1.5 transition ${entityLayout === "grid" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
                         title="2-column view"
                       >
                         <Columns2 className="h-4 w-4" />

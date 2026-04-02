@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply m-0 bg-oa-gray-5 text-black antialiased;
+    @apply m-0 bg-oa-gray-5 text-oa-text antialiased;
     font-family: 'Lato', sans-serif;
   }
 }
