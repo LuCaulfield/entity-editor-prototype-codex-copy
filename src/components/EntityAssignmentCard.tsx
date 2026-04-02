@@ -46,7 +46,7 @@ export default function EntityAssignmentCard({
   compact = false,
 }: EntityAssignmentCardProps) {
   return (
-    <div className="rounded-2xl border border-oa-border bg-white p-4 shadow-oa">
+    <div className="rounded-2xl border border-oa-border bg-white p-4">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">

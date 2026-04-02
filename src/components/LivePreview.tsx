@@ -32,7 +32,7 @@ const PACK_TYPE_LABELS: Record<string, string> = {
 
 export default function LivePreview({ totalQty, warningCount, previewEntities }: LivePreviewProps) {
   return (
-    <Card className="shadow-oa">
+    <Card>
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-3 text-2xl font-bold">
           <Eye className="h-6 w-6 text-primary-50" />
@@ -43,7 +43,7 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
         <div className="grid grid-cols-3 gap-3">
           <div className="col-span-2 rounded-2xl bg-oa-gray-5 p-4">
             <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Total</div>
-            <div className="mt-2 text-3xl font-bold text-black">{totalQty.toLocaleString()}</div>
+            <div className="mt-2 text-3xl font-bold text-oa-text">{totalQty.toLocaleString()}</div>
           </div>
           <div className="col-span-1 rounded-2xl bg-rose-50 p-4">
             <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Warn</div>
@@ -61,8 +61,8 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
             >
               {/* Entity header */}
               <div className="flex items-start justify-between gap-4">
-                <div className="text-sm font-bold text-black">{entity.name}</div>
-                <div className="text-xl font-bold text-black">{entity.qty.toLocaleString()}</div>
+                <div className="text-sm font-bold text-oa-text">{entity.name}</div>
+                <div className="text-xl font-bold text-oa-text">{entity.qty.toLocaleString()}</div>
               </div>
               <div className="mt-1 text-xs text-oa-gray-40">
                 Week {entity.week} · {PACK_TYPE_LABELS[entity.packType] ?? entity.packType} · Retail {entity.retailQty.toLocaleString()} / Ecom {entity.ecomQty.toLocaleString()}

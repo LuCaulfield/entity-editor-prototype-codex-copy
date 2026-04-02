@@ -230,7 +230,7 @@ export default function EntityEditorPrototype() {
   );
 
   return (
-    <div className="min-h-screen bg-oa-gray-5 text-oa-text">
+    <div className="min-h-screen bg-white text-oa-text">
       {/* Top nav — matches Figma: h-14, primary teal, shadow */}
       <div className="flex h-14 items-center bg-primary-50 px-6 shadow-oa">
         <div className="text-base font-semibold text-white">Ordering Application</div>
@@ -238,7 +238,7 @@ export default function EntityEditorPrototype() {
 
       <div className="mx-auto grid max-w-7xl grid-cols-12 gap-6 p-6">
         <div className="col-span-12 space-y-6 lg:col-span-9">
-          <Card className="shadow-oa">
+          <Card>
             <CardHeader>
               <CardTitle className="text-2xl font-bold">Configure entity split before Split View</CardTitle>
             </CardHeader>
