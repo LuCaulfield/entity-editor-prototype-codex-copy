@@ -299,7 +299,7 @@ export default function EntityEditorPrototype() {
               </div>
 
               {/* Entity assignment cards */}
-              <div className="space-y-4 rounded-2xl border border-oa-border bg-oa-gray-5 p-4">
+              <div className="space-y-4 rounded-xl border border-oa-border bg-oa-gray-5 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <div className="text-sm font-bold text-oa-text">Assign Country Groups per entity</div>
@@ -362,7 +362,7 @@ export default function EntityEditorPrototype() {
               </div>
 
               {message && (
-                <div className="flex items-start gap-2 rounded-xl border border-oa-border bg-white p-3 text-sm text-oa-gray-70">
+                <div className="flex items-start gap-2 rounded-lg border border-oa-border bg-white p-3 text-sm text-oa-gray-70">
                   <AlertCircle className="mt-0.5 h-4 w-4 text-oa-gray-40" />
                   <span>{message}</span>
                 </div>

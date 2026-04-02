@@ -41,11 +41,11 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-3 gap-3">
-          <div className="col-span-2 rounded-2xl bg-oa-gray-5 p-4">
+          <div className="col-span-2 rounded-xl bg-oa-gray-5 p-4">
             <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Total</div>
             <div className="mt-2 text-3xl font-bold text-oa-text">{totalQty.toLocaleString()}</div>
           </div>
-          <div className="col-span-1 rounded-2xl bg-rose-50 p-4">
+          <div className="col-span-1 rounded-xl bg-rose-50 p-4">
             <div className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Warn</div>
             <div className="mt-2 text-3xl font-bold text-rose-600">{warningCount}</div>
           </div>
@@ -55,7 +55,7 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
           {previewEntities.map((entity) => (
             <div
               key={`preview-${entity.id}`}
-              className={`rounded-2xl border p-4 ${
+              className={`rounded-xl border p-4 ${
                 entity.belowMin ? "border-rose-300 bg-white" : "border-oa-border bg-oa-gray-5"
               }`}
             >
@@ -72,7 +72,7 @@ export default function LivePreview({ totalQty, warningCount, previewEntities }:
               {entity.sets.length > 0 && (
                 <div className="mt-3 space-y-2">
                   {entity.sets.map((set, index) => (
-                    <div key={set.id} className="rounded-xl border border-oa-border bg-white px-3 py-2">
+                    <div key={set.id} className="rounded-lg border border-oa-border bg-white px-3 py-2">
                       <div className="mb-1 flex items-center gap-2">
                         <span className="text-xs font-bold uppercase tracking-wide text-oa-gray-70">
                           Set {index + 1}

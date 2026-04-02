@@ -46,7 +46,7 @@ export default function EntityAssignmentCard({
   compact = false,
 }: EntityAssignmentCardProps) {
   return (
-    <div className="rounded-2xl border border-oa-border bg-white p-4 shadow-oa">
+    <div className="rounded-xl border border-oa-border bg-white p-4 shadow-oa">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
@@ -103,7 +103,7 @@ export default function EntityAssignmentCard({
           );
 
           return (
-            <div key={set.id} className="flex-1 min-w-[200px] rounded-xl border border-oa-border bg-white p-3">
+            <div key={set.id} className="flex-1 min-w-[200px] rounded-lg border border-oa-border bg-white p-3">
               <div className="space-y-3">
                 {/* Set header */}
                 <div className="flex items-center justify-between">
@@ -186,7 +186,7 @@ export default function EntityAssignmentCard({
       <button
         type="button"
         onClick={() => onAddSet(id)}
-        className="mt-2 w-full rounded-xl border border-dashed border-oa-border py-2 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
+        className="mt-2 w-full rounded-lg border border-dashed border-oa-border py-2 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
       >
         + Add set
       </button>

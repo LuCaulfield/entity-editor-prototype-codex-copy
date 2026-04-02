@@ -92,7 +92,7 @@ export default function WeekDatePicker({ week, onChange }: WeekDatePickerProps) 
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-2xl border border-oa-border bg-white p-3 shadow-lg">
+        <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-xl border border-oa-border bg-white p-3 shadow-lg">
           {/* Month navigation */}
           <div className="mb-2 flex items-center justify-between">
             <button
