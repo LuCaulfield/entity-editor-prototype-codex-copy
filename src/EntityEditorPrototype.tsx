@@ -263,7 +263,7 @@ export default function EntityEditorPrototype() {
                 <div className="w-px self-stretch bg-oa-border" />
                 <div className="space-y-1">
                   <span className="text-xs font-semibold text-oa-gray-40">Delivery dates</span>
-                  <div className="flex h-9 items-center rounded-xl border border-oa-border bg-white p-0.5 text-xs shadow-sm">
+                  <div className="flex h-9 items-center rounded border border-oa-border bg-white p-0.5 text-xs shadow-sm">
                     <button
                       type="button"
                       onClick={() => setWeekScheduleMode("interval")}

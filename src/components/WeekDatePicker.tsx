@@ -80,7 +80,7 @@ export default function WeekDatePicker({ week, onChange }: WeekDatePickerProps) 
       <button
         type="button"
         onClick={() => { setViewDate(anchorDate); setIsOpen(!isOpen); }}
-        className="flex h-9 items-center gap-2 rounded-xl border border-oa-control bg-white px-3 text-sm shadow-sm transition hover:border-primary-50 focus:border-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-10 whitespace-nowrap"
+        className="flex h-9 items-center gap-2 rounded border border-oa-control bg-white px-3 text-sm shadow-sm transition hover:border-primary-50 focus:border-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-10 whitespace-nowrap"
       >
         <span className="text-oa-text">{displayDate}</span>
         <span className="rounded-md bg-primary-10 px-1.5 py-0.5 text-xs font-bold text-primary-80">
