@@ -25,6 +25,9 @@ type EntityAssignmentCardProps = {
   onMinQtyRetailChange?: (v: number) => void;
   compact?: boolean;
   warnings?: EntityWarning[];
+  assignmentMode?: "sets" | "matrix";
+  matrix?: Record<string, string[]>;
+  onToggleMatrix?: (entityId: number, countryGroup: string, color: string) => void;
 };
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -52,6 +55,9 @@ export default function EntityAssignmentCard({
   onMinQtyRetailChange,
   compact = false,
   warnings = [],
+  assignmentMode = "sets",
+  matrix = {},
+  onToggleMatrix,
 }: EntityAssignmentCardProps) {
   const hasError = warnings.some((w) => w.type === "error");
   return (
@@ -142,101 +148,120 @@ export default function EntityAssignmentCard({
         </div>
       )}
 
-      {/* Sets + Add set button inline */}
-      <div className="flex flex-wrap gap-2">
-        {sets.map((set, index) => {
-          const groupsInOtherSets = new Set(
-            sets.filter((s) => s.id !== set.id).flatMap((s) => s.countryGroups)
-          );
-
-          return (
-            <div key={set.id} className="flex-1 min-w-[200px] rounded-lg border border-oa-border bg-white p-3">
-              <div className="space-y-3">
-                {/* Set header */}
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wide text-oa-gray-70">
-                    Set {index + 1}
-                  </span>
-                  {sets.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => onRemoveSet(id, set.id)}
-                      className="rounded-md px-2 py-0.5 text-xs text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-
-                {/* Country groups */}
-                <div className="space-y-1.5">
-                  <FieldLabel>Country Groups</FieldLabel>
-                  <div className="flex flex-wrap gap-1.5">
-                    {availableCountryGroups.map((group) => {
-                      const activeInThis = set.countryGroups.includes(group);
-                      const takenByOther = groupsInOtherSets.has(group);
-
-                      return (
-                        <button
-                          key={group}
-                          type="button"
-                          onClick={() => onToggleCountryGroup(id, set.id, group)}
-                          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
-                            activeInThis
-                              ? "border-primary-50 bg-primary-50 text-white"
-                              : takenByOther
-                              ? "border-oa-border bg-white text-oa-gray-40 hover:border-primary-50 hover:text-primary-50"
-                              : "border-oa-border bg-white text-oa-gray-70 hover:border-primary-50 hover:text-primary-50"
-                          }`}
-                          title={takenByOther ? "Assigned to another set — click to move here" : undefined}
-                        >
-                          {group}
-                          {takenByOther && !activeInThis && (
-                            <span className="ml-1 text-oa-gray-40">↩</span>
-                          )}
+      {assignmentMode === "sets" ? (
+        <>
+          {/* Sets */}
+          <div className="flex flex-wrap gap-2">
+            {sets.map((set, index) => {
+              const groupsInOtherSets = new Set(
+                sets.filter((s) => s.id !== set.id).flatMap((s) => s.countryGroups)
+              );
+              return (
+                <div key={set.id} className="flex-1 min-w-[200px] rounded-lg border border-oa-border bg-white p-3">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wide text-oa-gray-70">Set {index + 1}</span>
+                      {sets.length > 1 && (
+                        <button type="button" onClick={() => onRemoveSet(id, set.id)} className="rounded-md px-2 py-0.5 text-xs text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition">
+                          Remove
                         </button>
-                      );
-                    })}
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <FieldLabel>Country Groups</FieldLabel>
+                      <div className="flex flex-wrap gap-1.5">
+                        {availableCountryGroups.map((group) => {
+                          const activeInThis = set.countryGroups.includes(group);
+                          const takenByOther = groupsInOtherSets.has(group);
+                          return (
+                            <button
+                              key={group}
+                              type="button"
+                              onClick={() => onToggleCountryGroup(id, set.id, group)}
+                              className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+                                activeInThis ? "border-primary-50 bg-primary-50 text-white"
+                                : takenByOther ? "border-oa-border bg-white text-oa-gray-40 hover:border-primary-50 hover:text-primary-50"
+                                : "border-oa-border bg-white text-oa-gray-70 hover:border-primary-50 hover:text-primary-50"
+                              }`}
+                              title={takenByOther ? "Assigned to another set — click to move here" : undefined}
+                            >
+                              {group}{takenByOther && !activeInThis && <span className="ml-1 text-oa-gray-40">↩</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <FieldLabel>Colors</FieldLabel>
+                      <div className="flex flex-wrap gap-1.5">
+                        {availableColors.map((color) => {
+                          const active = set.colors.includes(color);
+                          return (
+                            <button key={color} type="button" onClick={() => onToggleColor(id, set.id, color)}
+                              className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${active ? "border-oa-gray-70 bg-oa-gray-70 text-white" : "border-oa-border bg-white text-oa-gray-70 hover:border-oa-gray-70"}`}>
+                              {color}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                {/* Colors */}
-                <div className="space-y-1.5">
-                  <FieldLabel>Colors</FieldLabel>
-                  <div className="flex flex-wrap gap-1.5">
-                    {availableColors.map((color) => {
-                      const active = set.colors.includes(color);
-                      return (
+              );
+            })}
+          </div>
+          <button type="button" onClick={() => onAddSet(id)}
+            className="mt-2 w-full rounded-lg border border-dashed border-oa-border py-2 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition">
+            + Add set
+          </button>
+        </>
+      ) : (
+        /* Matrix view — rows = colors, columns = country groups */
+        <div className="overflow-x-auto rounded-lg border border-oa-border">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="bg-oa-gray-5">
+                <th className="border-b border-oa-border px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-oa-gray-40 w-20">
+                  Color
+                </th>
+                {availableCountryGroups.map((group) => (
+                  <th key={group} className="border-b border-l border-oa-border px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-oa-gray-70 min-w-[96px]">
+                    {group}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {availableColors.map((color, ci) => (
+                <tr key={color} className={ci % 2 === 0 ? "bg-white" : "bg-oa-gray-5/50"}>
+                  <td className="border-b border-oa-border px-3 py-2 text-xs font-semibold text-oa-gray-70">
+                    {color}
+                  </td>
+                  {availableCountryGroups.map((group) => {
+                    const active = (matrix[group] ?? []).includes(color);
+                    return (
+                      <td key={group} className="border-b border-l border-oa-border px-2 py-2 text-center">
                         <button
-                          key={color}
                           type="button"
-                          onClick={() => onToggleColor(id, set.id, color)}
-                          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+                          onClick={() => onToggleMatrix?.(id, group, color)}
+                          className={`mx-auto flex h-7 w-7 items-center justify-center rounded-md border transition ${
                             active
-                              ? "border-oa-gray-70 bg-oa-gray-70 text-white"
-                              : "border-oa-border bg-white text-oa-gray-70 hover:border-oa-gray-70"
+                              ? "border-primary-50 bg-primary-50 text-white"
+                              : "border-oa-border bg-white text-oa-gray-40 hover:border-primary-50 hover:text-primary-50"
                           }`}
+                          title={`${color} × ${group}`}
                         >
-                          {color}
+                          {active ? "✓" : ""}
                         </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Add set — below sets */}
-      <button
-        type="button"
-        onClick={() => onAddSet(id)}
-        className="mt-2 w-full rounded-lg border border-dashed border-oa-border py-2 text-sm font-medium text-oa-gray-40 hover:border-primary-50 hover:text-primary-50 transition"
-      >
-        + Add set
-      </button>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
     </div>
   );

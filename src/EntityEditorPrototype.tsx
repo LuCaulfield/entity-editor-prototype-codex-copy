@@ -94,6 +94,14 @@ export default function EntityEditorPrototype() {
   const [message, setMessage] = useState("Entities generated from manual parameters.");
   const [entityLayout, setEntityLayout] = useState<"list" | "grid">("list");
   const [weekScheduleMode, setWeekScheduleMode] = useState<"interval" | "individual">("interval");
+  const [assignmentMode, setAssignmentMode] = useState<"sets" | "matrix">("sets");
+
+  // entityMatrices: per-entity, per-country-group → selected colors
+  const [entityMatrices, setEntityMatrices] = useState<Record<number, Record<string, string[]>>>(() =>
+    Object.fromEntries(
+      Array.from({ length: INITIAL_ENTITY_COUNT }, (_, i) => [i + 1, {}])
+    )
+  );
 
   // Sync setsConfig, ports and packTypes when entity count changes
   useEffect(() => {
@@ -109,6 +117,13 @@ export default function EntityEditorPrototype() {
       const next: Record<number, string> = {};
       for (let i = 1; i <= entityCount; i++) {
         next[i] = prev[i] ?? INITIAL_PACK_TYPE;
+      }
+      return next;
+    });
+    setEntityMatrices((prev) => {
+      const next: Record<number, Record<string, string[]>> = {};
+      for (let i = 1; i <= entityCount; i++) {
+        next[i] = prev[i] ?? {};
       }
       return next;
     });
@@ -179,17 +194,26 @@ export default function EntityEditorPrototype() {
     [previewEntities, totals.validChannel]
   );
 
-  // Group 1 — global warnings
+  // Group 1 — global warnings (mode-aware)
   const globalWarnings = useMemo<EntityWarning[]>(() => {
     const warns: EntityWarning[] = [];
-    const allGroups = Object.values(entitySetsConfig).flatMap((sets) => sets.flatMap((s) => s.countryGroups));
-    const allColors = Object.values(entitySetsConfig).flatMap((sets) => sets.flatMap((s) => s.colors));
+    let allGroups: string[];
+    let allColors: string[];
+    if (assignmentMode === "matrix") {
+      allGroups = Object.values(entityMatrices).flatMap((m) =>
+        Object.entries(m).filter(([, colors]) => colors.length > 0).map(([g]) => g)
+      );
+      allColors = Object.values(entityMatrices).flatMap((m) => Object.values(m).flat());
+    } else {
+      allGroups = Object.values(entitySetsConfig).flatMap((sets) => sets.flatMap((s) => s.countryGroups));
+      allColors = Object.values(entitySetsConfig).flatMap((sets) => sets.flatMap((s) => s.colors));
+    }
     if (!allGroups.includes("UE"))
       warns.push({ type: "warning", message: 'No entity has "UE" country group assigned' });
     if (!allColors.includes("00J"))
       warns.push({ type: "warning", message: 'No entity has color "00J" assigned' });
     return warns;
-  }, [entitySetsConfig]);
+  }, [assignmentMode, entitySetsConfig, entityMatrices]);
 
   const generateEntities = (sourceMode = mode) => {
     if (retailPct + ecomPct !== 100) {
@@ -243,6 +267,17 @@ export default function EntityEditorPrototype() {
     setEntityPackTypes((prev) => ({ ...prev, [entityId]: packType }));
   };
 
+  const handleToggleMatrix = (entityId: number, countryGroup: string, color: string) => {
+    setEntityMatrices((prev) => {
+      const matrix = { ...prev[entityId] };
+      const colors = matrix[countryGroup] ?? [];
+      matrix[countryGroup] = colors.includes(color)
+        ? colors.filter((c) => c !== color)
+        : [...colors, color];
+      return { ...prev, [entityId]: matrix };
+    });
+  };
+
   // Build display cards from setsConfig (independent of generated entities)
   const entityCards = useMemo(
     () =>
@@ -262,13 +297,20 @@ export default function EntityEditorPrototype() {
     [entitySetsConfig, entityPorts, entityPackTypes, entityCount, entityWeeks, startWeek, intervalWeeks]
   );
 
-  // Group 2 — per-entity warnings
+  // Group 2 — per-entity warnings (mode-aware)
   const entityWarnings = useMemo<Record<number, EntityWarning[]>>(() => {
     const result: Record<number, EntityWarning[]> = {};
     entityCards.forEach((card) => {
       const warns: EntityWarning[] = [];
-      const allGroups = card.sets.flatMap((s) => s.countryGroups);
       const packType = entityPackTypes[card.id] ?? INITIAL_PACK_TYPE;
+
+      // Country groups for this entity — source depends on mode
+      const allGroups =
+        assignmentMode === "matrix"
+          ? Object.entries(entityMatrices[card.id] ?? {})
+              .filter(([, colors]) => colors.length > 0)
+              .map(([g]) => g)
+          : card.sets.flatMap((s) => s.countryGroups);
 
       if (
         packType === "retail-pack" &&
@@ -295,7 +337,7 @@ export default function EntityEditorPrototype() {
       result[card.id] = warns;
     });
     return result;
-  }, [entityCards, entityPackTypes, minQty, totalQty, entityCount]);
+  }, [entityCards, entityPackTypes, entityMatrices, assignmentMode, minQty, totalQty, entityCount]);
 
   return (
     <div className="min-h-screen bg-white text-oa-text">
@@ -394,6 +436,23 @@ export default function EntityEditorPrototype() {
                         <Columns2 className="h-4 w-4" />
                       </button>
                     </div>
+                    {/* Assignment mode toggle */}
+                    <div className="flex rounded-lg border border-oa-border bg-white p-0.5 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => setAssignmentMode("sets")}
+                        className={`rounded-md px-3 py-1.5 font-semibold transition ${assignmentMode === "sets" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                      >
+                        Sets
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAssignmentMode("matrix")}
+                        className={`rounded-md px-3 py-1.5 font-semibold transition ${assignmentMode === "matrix" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                      >
+                        Matrix
+                      </button>
+                    </div>
                   </div>
                 </div>
                 {/* Global warnings */}
@@ -428,6 +487,9 @@ export default function EntityEditorPrototype() {
                       onToggleColor={handleToggleColor}
                       compact={entityLayout === "grid"}
                       warnings={entityWarnings[card.id] ?? []}
+                      assignmentMode={assignmentMode}
+                      matrix={entityMatrices[card.id] ?? {}}
+                      onToggleMatrix={handleToggleMatrix}
                       {...(card.id === 1 ? {
                         minQtyRetail: minQty,
                         onMinQtyRetailChange: setMinQty,
