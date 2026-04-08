@@ -4,6 +4,8 @@ import { availableColors, availableCountryGroups, type EntitySet } from "@/types
 import StepperInput from "@/components/StepperInput";
 import WeekDatePicker from "@/components/WeekDatePicker";
 
+type EntityWarning = { type: "warning" | "error"; message: string };
+
 type EntityAssignmentCardProps = {
   id: number;
   name: string;
@@ -22,6 +24,7 @@ type EntityAssignmentCardProps = {
   minQtyRetail?: number;
   onMinQtyRetailChange?: (v: number) => void;
   compact?: boolean;
+  warnings?: EntityWarning[];
 };
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -48,9 +51,11 @@ export default function EntityAssignmentCard({
   minQtyRetail,
   onMinQtyRetailChange,
   compact = false,
+  warnings = [],
 }: EntityAssignmentCardProps) {
+  const hasError = warnings.some((w) => w.type === "error");
   return (
-    <div className="rounded-xl border border-oa-border bg-white p-4 shadow-oa">
+    <div className={`rounded-xl border bg-white p-4 shadow-oa ${hasError ? "border-rose-300" : "border-oa-border"}`}>
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-start justify-between gap-y-2 gap-x-3">
         <div className="flex items-center gap-2.5 pt-1">
@@ -117,6 +122,26 @@ export default function EntityAssignmentCard({
           </div>
         </div>
       </div>
+
+      {/* Per-entity warnings */}
+      {warnings.length > 0 && (
+        <div className="mb-3 space-y-1.5">
+          {warnings.map((w, i) => (
+            <div
+              key={i}
+              className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs ${
+                w.type === "error"
+                  ? "border-rose-200 bg-rose-50 text-rose-700"
+                  : "border-amber-200 bg-amber-50 text-amber-700"
+              }`}
+            >
+              <span className="shrink-0">{w.type === "error" ? "✕" : "⚠"}</span>
+              <span>{w.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Sets + Add set button inline */}
       <div className="flex flex-wrap gap-2">
         {sets.map((set, index) => {

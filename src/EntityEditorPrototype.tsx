@@ -39,6 +39,8 @@ const INITIAL_RETAIL_PCT = 62;
 const INITIAL_ECOM_PCT = 38;
 const INITIAL_MIN_QTY = 9000;
 
+type EntityWarning = { type: "warning" | "error"; message: string };
+
 export default function EntityEditorPrototype() {
   const [mode, setMode] = useState<"manual" | "bi">("manual");
   const [totalQty] = useState(INITIAL_TOTAL_QTY);
@@ -177,6 +179,18 @@ export default function EntityEditorPrototype() {
     [previewEntities, totals.validChannel]
   );
 
+  // Group 1 — global warnings
+  const globalWarnings = useMemo<EntityWarning[]>(() => {
+    const warns: EntityWarning[] = [];
+    const allGroups = Object.values(entitySetsConfig).flatMap((sets) => sets.flatMap((s) => s.countryGroups));
+    const allColors = Object.values(entitySetsConfig).flatMap((sets) => sets.flatMap((s) => s.colors));
+    if (!allGroups.includes("UE"))
+      warns.push({ type: "warning", message: 'No entity has "UE" country group assigned' });
+    if (!allColors.includes("00J"))
+      warns.push({ type: "warning", message: 'No entity has color "00J" assigned' });
+    return warns;
+  }, [entitySetsConfig]);
+
   const generateEntities = (sourceMode = mode) => {
     if (retailPct + ecomPct !== 100) {
       setMessage("Retail + E-commerce must equal 100%.");
@@ -248,6 +262,41 @@ export default function EntityEditorPrototype() {
     [entitySetsConfig, entityPorts, entityPackTypes, entityCount, entityWeeks, startWeek, intervalWeeks]
   );
 
+  // Group 2 — per-entity warnings
+  const entityWarnings = useMemo<Record<number, EntityWarning[]>>(() => {
+    const result: Record<number, EntityWarning[]> = {};
+    entityCards.forEach((card) => {
+      const warns: EntityWarning[] = [];
+      const allGroups = card.sets.flatMap((s) => s.countryGroups);
+      const packType = entityPackTypes[card.id] ?? INITIAL_PACK_TYPE;
+
+      if (
+        packType === "retail-pack" &&
+        (allGroups.includes("UE Ecom") || allGroups.includes("UE Ecom South"))
+      ) {
+        warns.push({ type: "warning", message: '"Retail Pack" used with Ecom country groups' });
+      }
+
+      if (card.id === 1 && entityCount > 1) {
+        if (minQty >= totalQty) {
+          warns.push({ type: "error", message: "Min quantity ≥ total quantity" });
+        } else {
+          const remaining = totalQty - minQty;
+          const perEntity = remaining / (entityCount - 1);
+          if (perEntity < 100) {
+            warns.push({
+              type: "error",
+              message: `Remaining qty per entity (${Math.floor(perEntity)}) is below 100`,
+            });
+          }
+        }
+      }
+
+      result[card.id] = warns;
+    });
+    return result;
+  }, [entityCards, entityPackTypes, minQty, totalQty, entityCount]);
+
   return (
     <div className="min-h-screen bg-white text-oa-text">
       {/* Top nav — matches Figma: h-14, primary teal, shadow */}
@@ -256,7 +305,7 @@ export default function EntityEditorPrototype() {
       </div>
 
       <div className="mx-auto grid max-w-[1760px] grid-cols-12 gap-6 p-6">
-        <div className="col-span-12 space-y-6 lg:col-span-9">
+        <div className="col-span-12 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl font-bold">Configure entity split before Split View</CardTitle>
@@ -282,7 +331,7 @@ export default function EntityEditorPrototype() {
                 <div className="w-px self-stretch bg-oa-border" />
                 <div className="space-y-1">
                   <span className="text-xs font-semibold text-oa-gray-40">Delivery dates</span>
-                  <div className="flex h-9 items-center rounded border border-oa-border bg-white p-0.5 text-xs shadow-sm">
+                  <div className="flex h-8 items-center rounded border border-oa-border bg-white p-0.5 text-xs shadow-sm">
                     <button
                       type="button"
                       onClick={() => setWeekScheduleMode("interval")}
@@ -347,6 +396,18 @@ export default function EntityEditorPrototype() {
                     </div>
                   </div>
                 </div>
+                {/* Global warnings */}
+                {globalWarnings.length > 0 && (
+                  <div className="space-y-1.5">
+                    {globalWarnings.map((w, i) => (
+                      <div key={i} className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                        <span className="shrink-0">⚠</span>
+                        <span>{w.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className={entityLayout === "grid" ? "grid grid-cols-2 gap-3" : "grid gap-3"}>
                   {entityCards.map((card) => (
                     <EntityAssignmentCard
@@ -366,6 +427,7 @@ export default function EntityEditorPrototype() {
                       onToggleCountryGroup={handleToggleCountryGroup}
                       onToggleColor={handleToggleColor}
                       compact={entityLayout === "grid"}
+                      warnings={entityWarnings[card.id] ?? []}
                       {...(card.id === 1 ? {
                         minQtyRetail: minQty,
                         onMinQtyRetailChange: setMinQty,
@@ -392,16 +454,6 @@ export default function EntityEditorPrototype() {
           </Card>
         </div>
 
-        {/* Right panel */}
-        <div className="col-span-12 lg:col-span-3">
-          <div className="sticky top-6 space-y-4">
-            <LivePreview
-              totalQty={totalQty}
-              warningCount={warningCount}
-              previewEntities={previewEntities}
-            />
-          </div>
-        </div>
       </div>
     </div>
   );
