@@ -31,6 +31,7 @@ function round(n: number) {
 
 const INITIAL_ENTITY_COUNT = 3;
 const INITIAL_PACK_TYPE = "retail-pack";
+const INITIAL_PORT = "shanghai";
 const INITIAL_TOTAL_QTY = 39000;
 const INITIAL_START_WEEK = 41;
 const INITIAL_INTERVAL_WEEKS = 2;
@@ -47,6 +48,12 @@ export default function EntityEditorPrototype() {
   const [retailPct, setRetailPct] = useState(INITIAL_RETAIL_PCT);
   const [ecomPct, setEcomPct] = useState(INITIAL_ECOM_PCT);
   const [minQty, setMinQty] = useState(INITIAL_MIN_QTY);
+
+  const [entityPorts, setEntityPorts] = useState<Record<number, string>>(() =>
+    Object.fromEntries(
+      Array.from({ length: INITIAL_ENTITY_COUNT }, (_, i) => [i + 1, INITIAL_PORT])
+    )
+  );
 
   const [entityPackTypes, setEntityPackTypes] = useState<Record<number, string>>(() =>
     Object.fromEntries(
@@ -86,9 +93,16 @@ export default function EntityEditorPrototype() {
   const [entityLayout, setEntityLayout] = useState<"list" | "grid">("list");
   const [weekScheduleMode, setWeekScheduleMode] = useState<"interval" | "individual">("interval");
 
-  // Sync setsConfig and packTypes when entity count changes
+  // Sync setsConfig, ports and packTypes when entity count changes
   useEffect(() => {
     setEntitySetsConfig((prev) => normalizeSetsConfig(prev, entityCount));
+    setEntityPorts((prev) => {
+      const next: Record<number, string> = {};
+      for (let i = 1; i <= entityCount; i++) {
+        next[i] = prev[i] ?? INITIAL_PORT;
+      }
+      return next;
+    });
     setEntityPackTypes((prev) => {
       const next: Record<number, string> = {};
       for (let i = 1; i <= entityCount; i++) {
@@ -207,6 +221,10 @@ export default function EntityEditorPrototype() {
     setEntitySetsConfig((prev) => toggleSetColor(prev, entityId, setId, color));
   };
 
+  const handleUpdateEntityPort = (entityId: number, port: string) => {
+    setEntityPorts((prev) => ({ ...prev, [entityId]: port }));
+  };
+
   const handleUpdateEntityPackType = (entityId: number, packType: string) => {
     setEntityPackTypes((prev) => ({ ...prev, [entityId]: packType }));
   };
@@ -221,12 +239,13 @@ export default function EntityEditorPrototype() {
           id: entityId,
           name: `Entity ${entityId}`,
           week: entityWeeks[entityId] ?? startWeek + i * intervalWeeks,
+          port: entityPorts[entityId] ?? INITIAL_PORT,
           packType: entityPackTypes[entityId] ?? INITIAL_PACK_TYPE,
           sets,
           allCountryGroups: getAllEntityCountryGroups(sets),
         };
       }),
-    [entitySetsConfig, entityPackTypes, entityCount, entityWeeks, startWeek, intervalWeeks]
+    [entitySetsConfig, entityPorts, entityPackTypes, entityCount, entityWeeks, startWeek, intervalWeeks]
   );
 
   return (
@@ -337,6 +356,8 @@ export default function EntityEditorPrototype() {
                       week={card.week}
                       weekEditable={weekScheduleMode === "individual"}
                       onWeekChange={(w) => handleSetEntityWeek(card.id, w)}
+                      port={card.port}
+                      onUpdatePort={handleUpdateEntityPort}
                       packType={card.packType}
                       onUpdatePackType={handleUpdateEntityPackType}
                       sets={card.sets}

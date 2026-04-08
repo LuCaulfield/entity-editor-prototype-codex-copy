@@ -10,6 +10,8 @@ type EntityAssignmentCardProps = {
   week: number;
   weekEditable: boolean;
   onWeekChange: (week: number) => void;
+  port: string;
+  onUpdatePort: (entityId: number, port: string) => void;
   packType: string;
   onUpdatePackType: (entityId: number, packType: string) => void;
   sets: EntitySet[];
@@ -34,6 +36,8 @@ export default function EntityAssignmentCard({
   week,
   weekEditable,
   onWeekChange,
+  port,
+  onUpdatePort,
   packType,
   onUpdatePackType,
   sets,
@@ -75,6 +79,24 @@ export default function EntityAssignmentCard({
               </div>
             </div>
           )}
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Port</p>
+            <div className="w-40">
+              <Select value={port} onValueChange={(value) => onUpdatePort(id, value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="shanghai">Shanghai</SelectItem>
+                  <SelectItem value="guangzhou">Guangzhou</SelectItem>
+                  <SelectItem value="ho-chi-minh">Ho Chi Minh City</SelectItem>
+                  <SelectItem value="istanbul">Istanbul</SelectItem>
+                  <SelectItem value="dhaka">Dhaka</SelectItem>
+                  <SelectItem value="colombo">Colombo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
             <div className="w-40">
