@@ -70,7 +70,7 @@ const SelectTrigger = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
         <select
           ref={ref}
           className={cn(
-            "flex h-9 w-full appearance-none rounded border border-oa-control bg-white px-3 py-1.5 pr-9 text-sm text-oa-text shadow-sm outline-none transition focus:border-primary-50 focus:ring-2 focus:ring-primary-10",
+            "flex h-8 w-full appearance-none rounded border border-oa-control bg-white px-3 py-1 pr-9 text-sm text-oa-text shadow-sm outline-none transition focus:border-primary-50 focus:ring-2 focus:ring-primary-10",
             className
           )}
           value={context.value}

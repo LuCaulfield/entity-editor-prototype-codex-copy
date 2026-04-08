@@ -266,7 +266,7 @@ export default function EntityEditorPrototype() {
               <Separator />
 
               {/* Parameters — single compact row */}
-              <div className="flex flex-wrap items-start gap-3">
+              <div className="flex flex-wrap items-end gap-3">
                 <div className="space-y-1">
                   <span className="text-xs font-semibold text-oa-gray-40">Total quantity</span>
                   <div className="w-32">

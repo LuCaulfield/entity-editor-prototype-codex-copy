@@ -52,8 +52,8 @@ export default function EntityAssignmentCard({
   return (
     <div className="rounded-xl border border-oa-border bg-white p-4 shadow-oa">
       {/* Header */}
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-y-2 gap-x-3">
+        <div className="flex items-center gap-2.5 pt-1">
           {id === 1 && (
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-white">
               A
@@ -61,7 +61,7 @@ export default function EntityAssignmentCard({
           )}
           <div className="text-sm font-bold text-oa-text">{name}</div>
         </div>
-        <div className={`flex items-end gap-3 ${compact ? "flex-col" : "flex-row"}`}>
+        <div className={`flex flex-wrap items-end gap-2 ${compact ? "flex-col" : "flex-row"}`}>
           <div className="space-y-1">
             <p className={`text-xs font-semibold uppercase tracking-wide ${weekEditable ? "text-oa-gray-40" : "text-oa-gray-40/50"}`}>
               Planned delivery date
@@ -74,14 +74,14 @@ export default function EntityAssignmentCard({
           {minQtyRetail !== undefined && onMinQtyRetailChange && (
             <div className="space-y-1">
               <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
-              <div className="w-40">
+              <div className="w-36">
                 <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
               </div>
             </div>
           )}
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Port</p>
-            <div className="w-40">
+            <div className="w-36">
               <Select value={port} onValueChange={(value) => onUpdatePort(id, value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -99,7 +99,7 @@ export default function EntityAssignmentCard({
           </div>
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
-            <div className="w-40">
+            <div className="w-36">
               <Select value={packType} onValueChange={(value) => onUpdatePackType(id, value)}>
                 <SelectTrigger>
                   <SelectValue />
