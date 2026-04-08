@@ -70,15 +70,6 @@ export default function EntityAssignmentCard({
               <WeekDatePicker week={week} onChange={onWeekChange} />
             </div>
           </div>
-          {!compact && <div className="w-px self-stretch bg-oa-border" />}
-          {minQtyRetail !== undefined && onMinQtyRetailChange && (
-            <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
-              <div className="w-36">
-                <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
-              </div>
-            </div>
-          )}
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Port</p>
             <div className="w-36">
@@ -97,6 +88,15 @@ export default function EntityAssignmentCard({
               </Select>
             </div>
           </div>
+          {!compact && <div className="w-px self-stretch bg-oa-border" />}
+          {minQtyRetail !== undefined && onMinQtyRetailChange && (
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Min quantity</p>
+              <div className="w-36">
+                <StepperInput value={minQtyRetail} onChange={onMinQtyRetailChange} min={0} step={100} />
+              </div>
+            </div>
+          )}
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-oa-gray-40">Pack type</p>
             <div className="w-36">

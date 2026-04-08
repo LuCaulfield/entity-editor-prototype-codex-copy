@@ -255,7 +255,7 @@ export default function EntityEditorPrototype() {
         <div className="text-base font-semibold text-white">Ordering Application</div>
       </div>
 
-      <div className="mx-auto grid max-w-7xl grid-cols-12 gap-6 p-6">
+      <div className="mx-auto grid max-w-[1760px] grid-cols-12 gap-6 p-6">
         <div className="col-span-12 space-y-6 lg:col-span-9">
           <Card>
             <CardHeader>
