@@ -341,12 +341,11 @@ export default function EntityEditorPrototype() {
 
   return (
     <div className="min-h-screen bg-white text-oa-text">
-      {/* Top nav — matches Figma: h-14, primary teal, shadow */}
+      {/* Top nav */}
       <div className="flex h-14 items-center bg-primary-50 px-6 shadow-oa">
         <div className="text-base font-semibold text-white">Ordering Application</div>
       </div>
-
-      <div className="mx-auto grid max-w-[1760px] grid-cols-12 gap-6 p-6">
+      <div className="mx-auto grid max-w-[1520px] grid-cols-12 gap-6 p-6">
         <div className="col-span-12 space-y-6">
           <Card>
             <CardHeader>
@@ -515,7 +514,6 @@ export default function EntityEditorPrototype() {
             </CardContent>
           </Card>
         </div>
-
       </div>
     </div>
   );
