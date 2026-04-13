@@ -36,3 +36,23 @@ export const BRAND_COUNTRY_GROUPS: Record<Brand, string[]> = {
   sinsay: ["UE", "Non UE", "UE South", "UE Ecom", "UE Ecom South", "No-EACU"],
   other: ["UE", "Non UE", "UE Ecom"],
 };
+
+export const BRAND_DEFAULT_ENTITY_COUNT: Record<Brand, number> = {
+  sinsay: 5,
+  other: 2,
+};
+
+// Default country groups per entity index, per brand
+export const BRAND_DEFAULT_COUNTRY_GROUPS_PER_ENTITY: Record<Brand, Record<number, string[]>> = {
+  sinsay: {
+    1: ["Non UE"],
+    2: ["UE"],
+    3: ["UE Ecom"],
+    4: ["UE South"],
+    5: ["UE Ecom South"],
+  },
+  other: {
+    1: ["UE", "Non UE"],
+    2: ["UE Ecom"],
+  },
+};

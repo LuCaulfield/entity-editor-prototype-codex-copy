@@ -48,10 +48,14 @@ function defaultCountryGroupsForEntity(entityId: number, entityCount: number): s
   return availableCountryGroups.filter((g) => (assignments[g] ?? []).includes(entityId));
 }
 
-export function createDefaultSet(entityId: number, entityCount: number): EntitySet {
+export function createDefaultSet(
+  entityId: number,
+  entityCount: number,
+  brandCountryGroups?: Record<number, string[]>
+): EntitySet {
   return {
     id: 1,
-    countryGroups: defaultCountryGroupsForEntity(entityId, entityCount),
+    countryGroups: brandCountryGroups?.[entityId] ?? defaultCountryGroupsForEntity(entityId, entityCount),
     colors: defaultColorsForEntity(entityId),
   };
 }
@@ -104,22 +108,26 @@ export function makeGeneratedEntities(params: {
 
 // --- EntitySetsConfig helpers ---
 
-export function buildDefaultSetsConfig(entityCount: number): Record<number, EntitySet[]> {
+export function buildDefaultSetsConfig(
+  entityCount: number,
+  brandCountryGroups?: Record<number, string[]>
+): Record<number, EntitySet[]> {
   return Object.fromEntries(
     Array.from({ length: entityCount }, (_, i) => {
       const entityId = i + 1;
-      return [entityId, [createDefaultSet(entityId, entityCount)]];
+      return [entityId, [createDefaultSet(entityId, entityCount, brandCountryGroups)]];
     })
   );
 }
 
 export function normalizeSetsConfig(
   prev: Record<number, EntitySet[]>,
-  entityCount: number
+  entityCount: number,
+  brandCountryGroups?: Record<number, string[]>
 ): Record<number, EntitySet[]> {
   const next: Record<number, EntitySet[]> = {};
   for (let i = 1; i <= entityCount; i++) {
-    next[i] = prev[i] ?? [createDefaultSet(i, entityCount)];
+    next[i] = prev[i] ?? [createDefaultSet(i, entityCount, brandCountryGroups)];
   }
   return next;
 }

@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { AlertCircle, Sparkles, Package2, LayoutList, Columns2 } from "lucide-react";
 
-import { type Entity, type Brand, BRANDS, BRAND_COUNTRY_GROUPS } from "@/types";
+import { type Entity, type Brand, BRANDS, BRAND_COUNTRY_GROUPS, BRAND_DEFAULT_ENTITY_COUNT, BRAND_DEFAULT_COUNTRY_GROUPS_PER_ENTITY } from "@/types";
 import {
   buildDefaultSetsConfig,
   normalizeSetsConfig,
@@ -29,7 +29,8 @@ function round(n: number) {
 }
 
 
-const INITIAL_ENTITY_COUNT = 3;
+const INITIAL_BRAND: Brand = "sinsay";
+const INITIAL_ENTITY_COUNT = BRAND_DEFAULT_ENTITY_COUNT[INITIAL_BRAND];
 const INITIAL_PACK_TYPE = "retail-pack";
 const INITIAL_PORT = "constanta";
 const INITIAL_TOTAL_QTY = 39000;
@@ -42,8 +43,20 @@ const INITIAL_MIN_QTY = 9000;
 type EntityWarning = { type: "warning" | "error"; message: string };
 
 export default function EntityEditorPrototype() {
-  const [brand, setBrand] = useState<Brand>("sinsay");
+  const [brand, setBrand] = useState<Brand>(INITIAL_BRAND);
   const countryGroups = BRAND_COUNTRY_GROUPS[brand];
+
+  function handleBrandChange(newBrand: Brand) {
+    const count = BRAND_DEFAULT_ENTITY_COUNT[newBrand];
+    const defaults = BRAND_DEFAULT_COUNTRY_GROUPS_PER_ENTITY[newBrand];
+    setBrand(newBrand);
+    setEntityCount(count);
+    setEntitySetsConfig(buildDefaultSetsConfig(count, defaults));
+    setEntityPorts(Object.fromEntries(Array.from({ length: count }, (_, i) => [i + 1, INITIAL_PORT])));
+    setEntityPackTypes(Object.fromEntries(Array.from({ length: count }, (_, i) => [i + 1, INITIAL_PACK_TYPE])));
+    setEntityMatrices(Object.fromEntries(Array.from({ length: count }, (_, i) => [i + 1, {}])));
+    setEntityWeeks(Object.fromEntries(Array.from({ length: count }, (_, i) => [i + 1, INITIAL_START_WEEK + i * INITIAL_INTERVAL_WEEKS])));
+  }
 
   const [mode, setMode] = useState<"manual" | "bi">("manual");
   const [totalQty] = useState(INITIAL_TOTAL_QTY);
@@ -67,7 +80,7 @@ export default function EntityEditorPrototype() {
   );
 
   const [entitySetsConfig, setEntitySetsConfig] = useState<Record<number, ReturnType<typeof buildDefaultSetsConfig>[number]>>(
-    () => buildDefaultSetsConfig(INITIAL_ENTITY_COUNT)
+    () => buildDefaultSetsConfig(INITIAL_ENTITY_COUNT, BRAND_DEFAULT_COUNTRY_GROUPS_PER_ENTITY[INITIAL_BRAND])
   );
 
   const [entityWeeks, setEntityWeeks] = useState<Record<number, number>>(() =>
@@ -108,7 +121,7 @@ export default function EntityEditorPrototype() {
 
   // Sync setsConfig, ports and packTypes when entity count changes
   useEffect(() => {
-    setEntitySetsConfig((prev) => normalizeSetsConfig(prev, entityCount));
+    setEntitySetsConfig((prev) => normalizeSetsConfig(prev, entityCount, BRAND_DEFAULT_COUNTRY_GROUPS_PER_ENTITY[brand]));
     setEntityPorts((prev) => {
       const next: Record<number, string> = {};
       for (let i = 1; i <= entityCount; i++) {
@@ -353,7 +366,7 @@ export default function EntityEditorPrototype() {
             <button
               key={b.id}
               type="button"
-              onClick={() => setBrand(b.id)}
+              onClick={() => handleBrandChange(b.id)}
               className={`rounded-md px-4 py-1.5 text-sm font-semibold transition ${
                 brand === b.id
                   ? "bg-white text-primary-50"
