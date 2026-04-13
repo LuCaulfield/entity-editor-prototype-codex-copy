@@ -1,6 +1,6 @@
 import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { availableColors, availableCountryGroups, type EntitySet } from "@/types";
+import { availableColors, type EntitySet } from "@/types";
 import StepperInput from "@/components/StepperInput";
 import WeekDatePicker from "@/components/WeekDatePicker";
 
@@ -28,6 +28,7 @@ type EntityAssignmentCardProps = {
   assignmentMode?: "sets" | "matrix";
   matrix?: Record<string, string[]>;
   onToggleMatrix?: (entityId: number, countryGroup: string, color: string) => void;
+  availableCountryGroups?: string[];
 };
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -58,6 +59,7 @@ export default function EntityAssignmentCard({
   assignmentMode = "sets",
   matrix = {},
   onToggleMatrix,
+  availableCountryGroups = ["UE", "Non UE", "UE South", "UE Ecom", "UE Ecom South", "No-EACU"],
 }: EntityAssignmentCardProps) {
   const hasError = warnings.some((w) => w.type === "error");
   return (
@@ -89,12 +91,8 @@ export default function EntityAssignmentCard({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="shanghai">Shanghai</SelectItem>
-                  <SelectItem value="guangzhou">Guangzhou</SelectItem>
-                  <SelectItem value="ho-chi-minh">Ho Chi Minh City</SelectItem>
-                  <SelectItem value="istanbul">Istanbul</SelectItem>
-                  <SelectItem value="dhaka">Dhaka</SelectItem>
-                  <SelectItem value="colombo">Colombo</SelectItem>
+                  <SelectItem value="constanta">Constanta</SelectItem>
+                  <SelectItem value="gdynia">Gdynia</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -116,12 +114,9 @@ export default function EntityAssignmentCard({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="single">Single</SelectItem>
-                  <SelectItem value="prepack">Prepack</SelectItem>
-                  <SelectItem value="multipack">Multipack</SelectItem>
-                  <SelectItem value="display">Display</SelectItem>
                   <SelectItem value="retail-pack">Retail Pack</SelectItem>
                   <SelectItem value="ecom-pack">Ecom Pack</SelectItem>
+                  <SelectItem value="display-box">Display Box</SelectItem>
                 </SelectContent>
               </Select>
             </div>

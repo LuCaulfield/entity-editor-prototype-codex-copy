@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { AlertCircle, Sparkles, Package2, LayoutList, Columns2 } from "lucide-react";
 
-import { type Entity } from "@/types";
+import { type Entity, type Brand, BRANDS, BRAND_COUNTRY_GROUPS } from "@/types";
 import {
   buildDefaultSetsConfig,
   normalizeSetsConfig,
@@ -31,7 +31,7 @@ function round(n: number) {
 
 const INITIAL_ENTITY_COUNT = 3;
 const INITIAL_PACK_TYPE = "retail-pack";
-const INITIAL_PORT = "shanghai";
+const INITIAL_PORT = "constanta";
 const INITIAL_TOTAL_QTY = 39000;
 const INITIAL_START_WEEK = 41;
 const INITIAL_INTERVAL_WEEKS = 2;
@@ -42,6 +42,9 @@ const INITIAL_MIN_QTY = 9000;
 type EntityWarning = { type: "warning" | "error"; message: string };
 
 export default function EntityEditorPrototype() {
+  const [brand, setBrand] = useState<Brand>("sinsay");
+  const countryGroups = BRAND_COUNTRY_GROUPS[brand];
+
   const [mode, setMode] = useState<"manual" | "bi">("manual");
   const [totalQty] = useState(INITIAL_TOTAL_QTY);
   const [entityCount, setEntityCount] = useState(INITIAL_ENTITY_COUNT);
@@ -342,8 +345,25 @@ export default function EntityEditorPrototype() {
   return (
     <div className="min-h-screen bg-white text-oa-text">
       {/* Top nav */}
-      <div className="flex h-14 items-center bg-primary-50 px-6 shadow-oa">
+      <div className="flex h-14 items-center justify-between bg-primary-50 px-6 shadow-oa">
         <div className="text-base font-semibold text-white">Ordering Application</div>
+        {/* Brand switcher */}
+        <div className="flex rounded-lg bg-primary-80/40 p-0.5">
+          {BRANDS.map((b) => (
+            <button
+              key={b.id}
+              type="button"
+              onClick={() => setBrand(b.id)}
+              className={`rounded-md px-4 py-1.5 text-sm font-semibold transition ${
+                brand === b.id
+                  ? "bg-white text-primary-50"
+                  : "text-white/80 hover:text-white"
+              }`}
+            >
+              {b.label}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="mx-auto grid max-w-[1520px] grid-cols-12 gap-6 p-6">
         <div className="col-span-12 space-y-6">
@@ -489,6 +509,7 @@ export default function EntityEditorPrototype() {
                       assignmentMode={assignmentMode}
                       matrix={entityMatrices[card.id] ?? {}}
                       onToggleMatrix={handleToggleMatrix}
+                      availableCountryGroups={countryGroups}
                       {...(card.id === 1 ? {
                         minQtyRetail: minQty,
                         onMinQtyRetailChange: setMinQty,
