@@ -170,6 +170,30 @@ export default function EntityEditorPrototype() {
     if (entityId === 1) setStartWeek(week);
   };
 
+  // Auto-set pack type based on country groups (ecom-only → ecom-pack, else retail-pack)
+  // Display Box is never overridden by this rule.
+  const ECOM_GROUPS = ["UE Ecom", "UE Ecom South"];
+  useEffect(() => {
+    setEntityPackTypes((prev) => {
+      const next = { ...prev };
+      for (let i = 1; i <= entityCount; i++) {
+        const current = prev[i] ?? INITIAL_PACK_TYPE;
+        if (current === "display-box") continue;
+
+        const groups =
+          assignmentMode === "matrix"
+            ? Object.entries(entityMatrices[i] ?? {})
+                .filter(([, colors]) => colors.length > 0)
+                .map(([g]) => g)
+            : (entitySetsConfig[i] ?? []).flatMap((s) => s.countryGroups);
+
+        const allEcom = groups.length > 0 && groups.every((g) => ECOM_GROUPS.includes(g));
+        next[i] = allEcom ? "ecom-pack" : "retail-pack";
+      }
+      return next;
+    });
+  }, [entityMatrices, entitySetsConfig, assignmentMode, entityCount]);
+
   // Sync sets from config into already-generated entities (live update)
   useEffect(() => {
     setEntities((prev) =>
