@@ -202,3 +202,18 @@ export function toggleSetColor(
 export function getAllEntityCountryGroups(sets: EntitySet[]): string[] {
   return [...new Set(sets.flatMap((s) => s.countryGroups))];
 }
+
+// Build default matrix state from brand presets
+// Each entity gets its default country groups, each mapped to that entity's default colors
+export function buildDefaultMatrices(
+  entityCount: number,
+  brandCountryGroups?: Record<number, string[]>
+): Record<number, Record<string, string[]>> {
+  const result: Record<number, Record<string, string[]>> = {};
+  for (let i = 1; i <= entityCount; i++) {
+    const groups = brandCountryGroups?.[i] ?? defaultCountryGroupsForEntity(i, entityCount);
+    const colors = defaultColorsForEntity(i);
+    result[i] = Object.fromEntries(groups.map((g) => [g, colors]));
+  }
+  return result;
+}

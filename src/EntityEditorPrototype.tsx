@@ -12,6 +12,7 @@ import { AlertCircle, Sparkles, Package2, LayoutList, Columns2 } from "lucide-re
 import { type Entity, type Brand, BRANDS, BRAND_COUNTRY_GROUPS, BRAND_DEFAULT_ENTITY_COUNT, BRAND_DEFAULT_COUNTRY_GROUPS_PER_ENTITY } from "@/types";
 import {
   buildDefaultSetsConfig,
+  buildDefaultMatrices,
   normalizeSetsConfig,
   makeGeneratedEntities,
   addSet,
@@ -54,7 +55,7 @@ export default function EntityEditorPrototype() {
     setEntitySetsConfig(buildDefaultSetsConfig(count, defaults));
     setEntityPorts(Object.fromEntries(Array.from({ length: count }, (_, i) => [i + 1, INITIAL_PORT])));
     setEntityPackTypes(Object.fromEntries(Array.from({ length: count }, (_, i) => [i + 1, INITIAL_PACK_TYPE])));
-    setEntityMatrices(Object.fromEntries(Array.from({ length: count }, (_, i) => [i + 1, {}])));
+    setEntityMatrices(buildDefaultMatrices(count, defaults));
     setEntityWeeks(Object.fromEntries(Array.from({ length: count }, (_, i) => [i + 1, INITIAL_START_WEEK + i * INITIAL_INTERVAL_WEEKS])));
   }
 
@@ -110,13 +111,11 @@ export default function EntityEditorPrototype() {
   const [message, setMessage] = useState("Entities generated from manual parameters.");
   const [entityLayout, setEntityLayout] = useState<"list" | "grid">("list");
   const [weekScheduleMode, setWeekScheduleMode] = useState<"interval" | "individual">("interval");
-  const [assignmentMode, setAssignmentMode] = useState<"sets" | "matrix">("sets");
+  const [assignmentMode, setAssignmentMode] = useState<"sets" | "matrix">("matrix");
 
   // entityMatrices: per-entity, per-country-group → selected colors
-  const [entityMatrices, setEntityMatrices] = useState<Record<number, Record<string, string[]>>>(() =>
-    Object.fromEntries(
-      Array.from({ length: INITIAL_ENTITY_COUNT }, (_, i) => [i + 1, {}])
-    )
+  const [entityMatrices, setEntityMatrices] = useState<Record<number, Record<string, string[]>>>(
+    () => buildDefaultMatrices(INITIAL_ENTITY_COUNT, BRAND_DEFAULT_COUNTRY_GROUPS_PER_ENTITY[INITIAL_BRAND])
   );
 
   // Sync setsConfig, ports and packTypes when entity count changes
@@ -472,17 +471,17 @@ export default function EntityEditorPrototype() {
                     <div className="flex rounded-lg border border-oa-border bg-white p-0.5 text-xs">
                       <button
                         type="button"
-                        onClick={() => setAssignmentMode("sets")}
-                        className={`rounded-md px-3 py-1.5 font-semibold transition ${assignmentMode === "sets" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
-                      >
-                        Sets
-                      </button>
-                      <button
-                        type="button"
                         onClick={() => setAssignmentMode("matrix")}
                         className={`rounded-md px-3 py-1.5 font-semibold transition ${assignmentMode === "matrix" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
                       >
                         Matrix
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAssignmentMode("sets")}
+                        className={`rounded-md px-3 py-1.5 font-semibold transition ${assignmentMode === "sets" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                      >
+                        Sets
                       </button>
                     </div>
                   </div>
