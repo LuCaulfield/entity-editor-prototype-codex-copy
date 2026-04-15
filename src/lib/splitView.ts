@@ -118,7 +118,7 @@ export function buildSplitViewData(params: {
       .filter((item) => item.qty > 0)
       .map((item) => ({ color: item.color, qty: formatQty(item.qty) }));
 
-    const columns = Array.from(new Set(Array.from(countryTotals.keys()).concat(groups)));
+    const columns = Array.from(allColumns);
     const matrixRows = availableColors
       .filter((color) => colorMatrix.has(color))
       .map((color) => ({

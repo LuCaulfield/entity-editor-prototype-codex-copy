@@ -158,7 +158,10 @@ function SplitEntityCard({ card, columns }: { card: SplitMatrixCard; columns: st
           <div />
           {columns.map((column, index) => (
             <div key={`footer-${card.id}-${column}`} className={`text-center text-[10px] ${isTeal ? "text-white/70" : "text-[#9A9A9A]"}`}>
-              {card.matrix.reduce((sum, row) => sum + Number(row.values[index].replace(/\s/g, "")), 0).toLocaleString("en-US").replace(/,/g, " ")}
+              {card.matrix
+                .reduce((sum, row) => sum + Number((row.values[index] ?? "0").replace(/\s/g, "")), 0)
+                .toLocaleString("en-US")
+                .replace(/,/g, " ")}
             </div>
           ))}
         </div>
