@@ -134,7 +134,7 @@ const ENTITIES = [
   { qty: "2 500", share: "18 %", shareAlt: "(33 %)", country: "UE Ecom" },
   { qty: "3 500", share: "25 %", shareAlt: "",       country: "UE South" },
   { qty: "2 500", share: "18 %", shareAlt: "(33 %)", country: "UE Ecom South" },
-  { qty: "1 000", share: "7 %",  shareAlt: "",       country: "No-EACU" },
+  { qty: "1 000", share: "7 %",  shareAlt: "",       country: "NO-EACU" },
 ];
 
 // ── Column widths (total = 1392px) ────────────────────────────────────────────
