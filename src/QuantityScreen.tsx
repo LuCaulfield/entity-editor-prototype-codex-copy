@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp, ChevronRight, MoreVertical, Check, Bell } from "lucide-react";
 import EntityEditorPrototype from "./EntityEditorPrototype";
+import SplitViewPanel from "./SplitViewPanel";
 
 // ── Stepper ──────────────────────────────────────────────────────────────────
 const STEP_LABELS = ["Style details", "Supplier", "Transport", "Pricing", "Quantity", "Summary"];
@@ -163,6 +164,7 @@ const COLOR_ROWS = [
 export default function QuantityScreen() {
   const [expanded00J, setExpanded00J] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
+  const [splitViewOpen, setSplitViewOpen] = useState(false);
 
   return (
     <div className="h-screen bg-white flex flex-col font-sans overflow-hidden">
@@ -246,147 +248,136 @@ export default function QuantityScreen() {
             </div>
           </div>
 
-          {/* ── Table ──────────────────────────────────────────────── */}
-          <div style={{ borderRadius: 16, boxShadow: "0px 1px 2px rgba(0,0,0,0.24), 0px 2px 12px rgba(0,0,0,0.08)", overflow: "clip" }}>
-            <div className="overflow-x-auto">
-              <table style={{ tableLayout: "fixed", width: 1392, borderCollapse: "collapse" }}>
-                <colgroup>
-                  {COL_WIDTHS.map((w, i) => <col key={i} style={{ width: w }} />)}
-                </colgroup>
+          {splitViewOpen ? (
+            <SplitViewPanel />
+          ) : (
+            <div style={{ borderRadius: 16, boxShadow: "0px 1px 2px rgba(0,0,0,0.24), 0px 2px 12px rgba(0,0,0,0.08)", overflow: "clip" }}>
+              <div className="overflow-x-auto">
+                <table style={{ tableLayout: "fixed", width: 1392, borderCollapse: "collapse" }}>
+                  <colgroup>
+                    {COL_WIDTHS.map((w, i) => <col key={i} style={{ width: w }} />)}
+                  </colgroup>
 
-                {/* Table Header */}
-                <thead>
-                  <tr style={{ backgroundColor: "#FFFFFF", borderBottom: "1px solid #E0E0E0" }}>
-                    <th style={{ ...S.th, textAlign: "center" }} />
-                    <th style={S.th} />
-                    <th style={S.th}>Color</th>
-                    <th style={S.th}>Store Group</th>
-                    <th style={S.th}>Eligibility</th>
-                    <th style={S.th}>Size Curve</th>
-                    <th style={{ ...S.th, textAlign: "center" }}>PPack & Xdock</th>
-                    <th style={S.th}>Packing Curve</th>
-                    <th style={{ ...S.th, textAlign: "right" }}>Minimum Logistics Quantity</th>
-                    <th style={{ ...S.th, textAlign: "right" }}>Quantity</th>
-                    <th style={S.th}>Share</th>
-                    <th style={S.th}>Country Group</th>
-                    <th style={S.th}>SOS Type</th>
-                    <th style={{ ...S.th, textAlign: "center" }}>Weeks on Stock</th>
-                    <th style={S.th}>Seasonality</th>
-                    <th style={{ ...S.th, textAlign: "center", position: "sticky", right: 0, backgroundColor: "#FFFFFF", borderLeft: "1px solid #E0E0E0" }}>
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
+                  <thead>
+                    <tr style={{ backgroundColor: "#FFFFFF", borderBottom: "1px solid #E0E0E0" }}>
+                      <th style={{ ...S.th, textAlign: "center" }} />
+                      <th style={S.th} />
+                      <th style={S.th}>Color</th>
+                      <th style={S.th}>Store Group</th>
+                      <th style={S.th}>Eligibility</th>
+                      <th style={S.th}>Size Curve</th>
+                      <th style={{ ...S.th, textAlign: "center" }}>PPack & Xdock</th>
+                      <th style={S.th}>Packing Curve</th>
+                      <th style={{ ...S.th, textAlign: "right" }}>Minimum Logistics Quantity</th>
+                      <th style={{ ...S.th, textAlign: "right" }}>Quantity</th>
+                      <th style={S.th}>Share</th>
+                      <th style={S.th}>Country Group</th>
+                      <th style={S.th}>SOS Type</th>
+                      <th style={{ ...S.th, textAlign: "center" }}>Weeks on Stock</th>
+                      <th style={S.th}>Seasonality</th>
+                      <th style={{ ...S.th, textAlign: "center", position: "sticky", right: 0, backgroundColor: "#FFFFFF", borderLeft: "1px solid #E0E0E0" }}>
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
 
-                <tbody>
-                  {/* ── Parent / Summary row ──────────────────────── */}
-                  <tr style={{ backgroundColor: "#FFFFFF", ...S.rowBorder }}>
-                    <td style={{ height: 78, ...S.tdMid, textAlign: "center" }}>
-                      <ChevronUp className="w-5 h-5 inline-block" style={{ color: "rgba(0,0,0,0.54)" }} />
-                    </td>
-                    <td style={{ height: 78 }} />
-                    <td style={{ ...S.tdMid }}>–</td>
-                    <td style={S.td}>N/A</td>
-                    <td style={S.td}>XL-XS</td>
-                    <td style={S.td}>TA_PRECAPCK_2/4</td>
-                    <td style={{ ...S.td, textAlign: "center" }}><CheckboxIcon muted /></td>
-                    <td style={S.tdMid}><InputCell value="~" /></td>
-                    <td style={S.minQty}>30 000</td>
-                    <td style={{ ...S.tdMid, textAlign: "right" }}>~</td>
-                    <td style={S.tdMid}>~</td>
-                    <td style={S.tdMid}>–</td>
-                    <td style={S.td} />
-                    <td style={{ ...S.td, textAlign: "center" }}><InputCell value="41" /></td>
-                    <td style={S.td}><InputCell value="Winter" /></td>
-                    <td style={{ ...S.actions, height: 78 }} />
-                  </tr>
+                  <tbody>
+                    <tr style={{ backgroundColor: "#FFFFFF", ...S.rowBorder }}>
+                      <td style={{ height: 78, ...S.tdMid, textAlign: "center" }}>
+                        <ChevronUp className="w-5 h-5 inline-block" style={{ color: "rgba(0,0,0,0.54)" }} />
+                      </td>
+                      <td style={{ height: 78 }} />
+                      <td style={{ ...S.tdMid }}>–</td>
+                      <td style={S.td}>N/A</td>
+                      <td style={S.td}>XL-XS</td>
+                      <td style={S.td}>TA_PRECAPCK_2/4</td>
+                      <td style={{ ...S.td, textAlign: "center" }}><CheckboxIcon muted /></td>
+                      <td style={S.tdMid}><InputCell value="~" /></td>
+                      <td style={S.minQty}>30 000</td>
+                      <td style={{ ...S.tdMid, textAlign: "right" }}>~</td>
+                      <td style={S.tdMid}>~</td>
+                      <td style={S.tdMid}>–</td>
+                      <td style={S.td} />
+                      <td style={{ ...S.td, textAlign: "center" }}><InputCell value="41" /></td>
+                      <td style={S.td}><InputCell value="Winter" /></td>
+                      <td style={{ ...S.actions, height: 78 }} />
+                    </tr>
 
-                  {/* ── Color rows (00J, 11M, 22P) ───────────────── */}
-                  {COLOR_ROWS.map((row) => (
-                    <React.Fragment key={row.id}>
-                      {/* Color main row */}
-                      <tr style={{ backgroundColor: "#FFFFFF", ...S.rowBorder }}>
-                        <td style={{ height: 78, ...S.td, textAlign: "center" }}>
-                          {row.hasEntities ? (
-                            <button onClick={() => setExpanded00J(e => !e)} className="flex items-center justify-center w-full">
-                              {expanded00J
-                                ? <ChevronUp className="w-5 h-5" style={{ color: "rgba(0,0,0,0.54)" }} />
-                                : <ChevronDown className="w-5 h-5" style={{ color: "rgba(0,0,0,0.54)" }} />}
+                    {COLOR_ROWS.map((row) => (
+                      <React.Fragment key={row.id}>
+                        <tr style={{ backgroundColor: "#FFFFFF", ...S.rowBorder }}>
+                          <td style={{ height: 78, ...S.td, textAlign: "center" }}>
+                            {row.hasEntities ? (
+                              <button onClick={() => setExpanded00J(e => !e)} className="flex items-center justify-center w-full">
+                                {expanded00J
+                                  ? <ChevronUp className="w-5 h-5" style={{ color: "rgba(0,0,0,0.54)" }} />
+                                  : <ChevronDown className="w-5 h-5" style={{ color: "rgba(0,0,0,0.54)" }} />}
+                              </button>
+                            ) : (
+                              <ChevronDown className="w-5 h-5 inline-block" style={{ color: "rgba(0,0,0,0.54)" }} />
+                            )}
+                          </td>
+                          <td style={{ height: 78 }} />
+                          <td style={S.td}>{row.color}</td>
+                          <td style={S.td}>N/A</td>
+                          <td style={S.td}>XL-XS</td>
+                          <td style={S.td} />
+                          <td style={{ ...S.td, textAlign: "center" }} />
+                          <td style={S.td}><InputCell value="~" /></td>
+                          <td style={S.minQty}>9 400</td>
+                          <td style={S.qty}>{row.qty}</td>
+                          <td style={S.td}>100%</td>
+                          <td style={S.tdMid}>–</td>
+                          <td style={S.td}><InputCell value="OB3W" /></td>
+                          <td style={{ ...S.td, textAlign: "center" }}><InputCell value="41" /></td>
+                          <td style={S.td}><InputCell value="Winter" /></td>
+                          <td style={{ ...S.actions, height: 78 }}>
+                            <button className="rounded p-1.5 hover:bg-gray-100 mx-auto flex">
+                              <MoreVertical className="w-4 h-4" style={{ color: "rgba(0,0,0,0.54)" }} />
                             </button>
-                          ) : (
-                            <ChevronDown className="w-5 h-5 inline-block" style={{ color: "rgba(0,0,0,0.54)" }} />
-                          )}
-                        </td>
-                        <td style={{ height: 78 }} />
-                        <td style={S.td}>{row.color}</td>
-                        <td style={S.td}>N/A</td>
-                        <td style={S.td}>XL-XS</td>
-                        <td style={S.td} />
-                        <td style={{ ...S.td, textAlign: "center" }} />
-                        <td style={S.td}><InputCell value="~" /></td>
-                        <td style={S.minQty}>9 400</td>
-                        <td style={S.qty}>{row.qty}</td>
-                        <td style={S.td}>100%</td>
-                        <td style={S.tdMid}>–</td>
-                        <td style={S.td}><InputCell value="OB3W" /></td>
-                        <td style={{ ...S.td, textAlign: "center" }}><InputCell value="41" /></td>
-                        <td style={S.td}><InputCell value="Winter" /></td>
-                        <td style={{ ...S.actions, height: 78 }}>
-                          <button className="rounded p-1.5 hover:bg-gray-100 mx-auto flex">
-                            <MoreVertical className="w-4 h-4" style={{ color: "rgba(0,0,0,0.54)" }} />
-                          </button>
-                        </td>
-                      </tr>
+                          </td>
+                        </tr>
 
-                      {/* Entity section — only for 00J when expanded */}
-                      {row.hasEntities && expanded00J && (
-                        <>
-                          {/* Entity sub-rows */}
-                          {ENTITIES.map((e, i) => (
-                            <tr key={i} style={{ backgroundColor: "#FFFFFF", ...S.rowBorder }}>
-                              {/* cols 0–6 empty */}
-                              <td style={{ height: 80 }} />
-                              <td style={{ height: 80 }} />
-                              <td style={{ height: 80 }} />
-                              <td style={{ height: 80 }} />
-                              <td style={{ height: 80 }} />
-                              <td style={{ height: 80 }} />
-                              <td style={{ height: 80 }} />
-                              {/* col 7: Packing Curve — two stacked selectors */}
-                              <td style={{ height: 80, padding: "0 8px", verticalAlign: "middle" }}>
-                                <PackingCurveSelect />
-                              </td>
-                              {/* col 8: Min Log Qty gray */}
-                              <td style={{ height: 80, backgroundColor: "#F2F2F2" }} />
-                              {/* col 9: Qty */}
-                              <td style={{ ...S.qty, height: 80 }}>{e.qty}</td>
-                              {/* col 10: Share */}
-                              <td style={{ ...S.td, height: 80 }}>
-                                <span>{e.share}</span>
-                                {e.shareAlt && (
-                                  <span className="ml-1" style={{ fontSize: 12, color: "rgba(0,0,0,0.38)" }}>{e.shareAlt}</span>
-                                )}
-                              </td>
-                              {/* col 11: Country Group */}
-                              <td style={{ ...S.td, height: 80 }}>
-                                <CountryBadge country={e.country} />
-                              </td>
-                              {/* cols 12–14 empty */}
-                              <td style={{ height: 80 }} />
-                              <td style={{ height: 80 }} />
-                              <td style={{ height: 80 }} />
-                              {/* col 15: Actions sticky */}
-                              <td style={{ ...S.actions, height: 80 }} />
-                            </tr>
-                          ))}
-                        </>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
+                        {row.hasEntities && expanded00J && (
+                          <>
+                            {ENTITIES.map((e, i) => (
+                              <tr key={i} style={{ backgroundColor: "#FFFFFF", ...S.rowBorder }}>
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80, padding: "0 8px", verticalAlign: "middle" }}>
+                                  <PackingCurveSelect />
+                                </td>
+                                <td style={{ height: 80, backgroundColor: "#F2F2F2" }} />
+                                <td style={{ ...S.qty, height: 80 }}>{e.qty}</td>
+                                <td style={{ ...S.td, height: 80 }}>
+                                  <span>{e.share}</span>
+                                  {e.shareAlt && (
+                                    <span className="ml-1" style={{ fontSize: 12, color: "rgba(0,0,0,0.38)" }}>{e.shareAlt}</span>
+                                  )}
+                                </td>
+                                <td style={{ ...S.td, height: 80 }}>
+                                  <CountryBadge country={e.country} />
+                                </td>
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80 }} />
+                                <td style={{ height: 80 }} />
+                                <td style={{ ...S.actions, height: 80 }} />
+                              </tr>
+                            ))}
+                          </>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
 
         </div>
       </main>
@@ -396,7 +387,11 @@ export default function QuantityScreen() {
         className="shrink-0 flex items-center justify-between px-6 z-20"
         style={{ height: 56, backgroundColor: "#FFFFFF", boxShadow: "0px -1px 2px rgba(0,0,0,0.12), 0px -2px 8px rgba(0,0,0,0.06)" }}
       >
-        <button className="rounded-lg px-4 py-2 text-[14px] uppercase" style={{ border: "1px solid #00D7B9", backgroundColor: "#FFFFFF", color: "rgba(0,0,0,0.87)", letterSpacing: "0.07em" }}>
+        <button
+          onClick={() => splitViewOpen && setSplitViewOpen(false)}
+          className="rounded-lg px-4 py-2 text-[14px] uppercase"
+          style={{ border: "1px solid #00D7B9", backgroundColor: "#FFFFFF", color: "rgba(0,0,0,0.87)", letterSpacing: "0.07em" }}
+        >
           Back
         </button>
         <div className="flex items-center gap-4">
@@ -434,7 +429,14 @@ export default function QuantityScreen() {
               <button onClick={() => setEditorOpen(false)} className="rounded-lg border px-4 py-2 text-sm font-semibold hover:bg-gray-50" style={{ borderColor: "#E0E0E0", color: "rgba(0,0,0,0.87)" }}>
                 Cancel
               </button>
-              <button onClick={() => setEditorOpen(false)} className="rounded-lg px-5 py-2 text-sm font-semibold" style={{ backgroundColor: "#00D7B9", color: "rgba(0,0,0,0.87)" }}>
+              <button
+                onClick={() => {
+                  setEditorOpen(false);
+                  setSplitViewOpen(true);
+                }}
+                className="rounded-lg px-5 py-2 text-sm font-semibold"
+                style={{ backgroundColor: "#00D7B9", color: "rgba(0,0,0,0.87)" }}
+              >
                 Generate entities
               </button>
             </div>

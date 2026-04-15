@@ -548,19 +548,6 @@ export default function EntityEditorPrototype({ asModal = false }: { asModal?: b
                 </div>
               </div>
 
-              {/* Generate button */}
-              <div className="flex flex-wrap gap-3">
-                <Button onClick={() => generateEntities(mode)}>
-                  {mode === "bi" ? "Generate BI proposal" : "Generate entities"}
-                </Button>
-              </div>
-
-              {message && (
-                <div className="flex items-start gap-2 rounded-lg border border-oa-border bg-white p-3 text-sm text-oa-gray-70">
-                  <AlertCircle className="mt-0.5 h-4 w-4 text-oa-gray-40" />
-                  <span>{message}</span>
-                </div>
-              )}
             </CardContent>
         </div>
       </div>
