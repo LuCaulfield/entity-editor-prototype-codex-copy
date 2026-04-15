@@ -33,7 +33,7 @@ export const BRANDS: { id: Brand; label: string }[] = [
 ];
 
 export const BRAND_COUNTRY_GROUPS: Record<Brand, string[]> = {
-  sinsay: ["UE", "Non UE", "UE South", "UE Ecom", "UE Ecom South", "No-EACU"],
+  sinsay: ["UE", "Non UE", "UE Ecom", "UE South", "UE Ecom South", "No-EACU"],
   other: ["UE", "Non UE", "UE Ecom"],
 };
 

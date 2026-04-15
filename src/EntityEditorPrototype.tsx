@@ -43,7 +43,7 @@ const INITIAL_MIN_QTY = 9000;
 
 type EntityWarning = { type: "warning" | "error"; message: string };
 
-export default function EntityEditorPrototype() {
+export default function EntityEditorPrototype({ asModal = false }: { asModal?: boolean }) {
   const [brand, setBrand] = useState<Brand>(INITIAL_BRAND);
   const countryGroups = BRAND_COUNTRY_GROUPS[brand];
 
@@ -378,36 +378,29 @@ export default function EntityEditorPrototype() {
     return result;
   }, [entityCards, entityPackTypes, entityMatrices, assignmentMode, minQty, totalQty, entityCount]);
 
-  return (
-    <div className="min-h-screen bg-white text-oa-text">
-      {/* Top nav */}
-      <div className="flex h-14 items-center justify-between bg-primary-50 px-6 shadow-oa">
-        <div className="text-base font-semibold text-white">Ordering Application</div>
-        {/* Brand switcher */}
-        <div className="flex rounded-lg bg-primary-80/40 p-0.5">
-          {BRANDS.map((b) => (
-            <button
-              key={b.id}
-              type="button"
-              onClick={() => handleBrandChange(b.id)}
-              className={`rounded-md px-4 py-1.5 text-sm font-semibold transition ${
-                brand === b.id
-                  ? "bg-white text-primary-50"
-                  : "text-white/80 hover:text-white"
-              }`}
-            >
-              {b.label}
-            </button>
-          ))}
-        </div>
+  // ── Brand switcher UI (reused in both modal and full-page) ──────────────
+  const brandSwitcher = (
+    <div className="flex rounded-lg bg-primary-80/40 p-0.5">
+      {BRANDS.map((b) => (
+        <button key={b.id} type="button" onClick={() => handleBrandChange(b.id)}
+          className={`rounded-md px-4 py-1.5 text-sm font-semibold transition ${
+            brand === b.id ? "bg-white text-primary-50" : "text-white/80 hover:text-white"
+          }`}>
+          {b.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  if (asModal) return (
+    <div className="space-y-0 text-oa-text">
+      {/* Compact brand switcher bar */}
+      <div className="flex items-center gap-3 border-b border-oa-border bg-primary-50 px-6 py-2">
+        <span className="text-xs font-semibold text-white/70 uppercase tracking-wide">Brand</span>
+        {brandSwitcher}
       </div>
-      <div className="mx-auto grid max-w-[1520px] grid-cols-12 gap-6 p-6">
-        <div className="col-span-12 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">Configure entity split before Split View</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+      <div className="space-y-6 p-6">
+        <CardContent className="space-y-6 !p-0">
 
               <Separator />
 
@@ -556,6 +549,161 @@ export default function EntityEditorPrototype() {
               </div>
 
               {/* Generate button */}
+              <div className="flex flex-wrap gap-3">
+                <Button onClick={() => generateEntities(mode)}>
+                  {mode === "bi" ? "Generate BI proposal" : "Generate entities"}
+                </Button>
+              </div>
+
+              {message && (
+                <div className="flex items-start gap-2 rounded-lg border border-oa-border bg-white p-3 text-sm text-oa-gray-70">
+                  <AlertCircle className="mt-0.5 h-4 w-4 text-oa-gray-40" />
+                  <span>{message}</span>
+                </div>
+              )}
+            </CardContent>
+        </div>
+      </div>
+  );
+
+  // ── Full-page view ────────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen bg-white text-oa-text">
+      <div className="flex h-14 items-center justify-between bg-primary-50 px-6 shadow-oa">
+        <div className="text-base font-semibold text-white">Ordering Application</div>
+        {brandSwitcher}
+      </div>
+      <div className="mx-auto grid max-w-[1520px] grid-cols-12 gap-6 p-6">
+        <div className="col-span-12 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">Configure entity split before Split View</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+
+              <Separator />
+
+              {/* Parameters — single compact row */}
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">Total quantity</span>
+                  <div className="w-32">
+                    <Input type="number" value={totalQty} readOnly disabled aria-readonly="true" className="text-center" />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">Entities</span>
+                  <div className="w-32">
+                    <StepperInput value={entityCount} onChange={(v) => setEntityCount(Math.max(1, v))} min={1} />
+                  </div>
+                </div>
+                <div className="w-px self-stretch bg-oa-border" />
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">Delivery dates</span>
+                  <div className="flex h-8 items-center rounded border border-oa-border bg-white p-0.5 text-xs shadow-sm">
+                    <button type="button" onClick={() => setWeekScheduleMode("interval")}
+                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "interval" ? "bg-primary-50 text-white" : "text-oa-gray-40 hover:text-oa-gray-70"}`}>
+                      Default
+                    </button>
+                    <button type="button" onClick={() => setWeekScheduleMode("individual")}
+                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "individual" ? "bg-primary-50 text-white" : "text-oa-gray-40 hover:text-oa-gray-70"}`}>
+                      Individual
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-oa-gray-40">First planned delivery</span>
+                  <WeekDatePicker week={startWeek} onChange={setStartWeek} />
+                </div>
+                <div className="space-y-1">
+                  <span className={`text-xs font-semibold ${weekScheduleMode === "individual" ? "text-oa-gray-40/40" : "text-oa-gray-40"}`}>Weeks between</span>
+                  <div className="w-32">
+                    {weekScheduleMode === "individual" ? (
+                      <div className="flex items-stretch overflow-hidden rounded-xl border border-oa-border bg-white shadow-sm">
+                        <span className="flex flex-1 items-center justify-center py-2 text-sm font-semibold text-primary-80">~</span>
+                      </div>
+                    ) : (
+                      <StepperInput value={intervalWeeks} onChange={(v) => setIntervalWeeks(Math.max(1, v))} min={1} />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Entity assignment cards */}
+              <div className="space-y-4 rounded-xl border border-oa-border bg-oa-gray-5 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-bold text-oa-text">Assign Country Groups per entity</div>
+                    <p className="text-sm text-oa-gray-40">
+                      Each entity can have multiple sets — each set groups country groups with their own colors.
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    <div className="flex rounded-lg border border-oa-border bg-white p-0.5">
+                      <button type="button" onClick={() => setEntityLayout("list")}
+                        className={`rounded-md p-1.5 transition ${entityLayout === "list" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`} title="List view">
+                        <LayoutList className="h-4 w-4" />
+                      </button>
+                      <button type="button" onClick={() => setEntityLayout("grid")}
+                        className={`rounded-md p-1.5 transition ${entityLayout === "grid" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`} title="2-column view">
+                        <Columns2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="flex rounded-lg border border-oa-border bg-white p-0.5 text-xs">
+                      <button type="button" onClick={() => setAssignmentMode("matrix")}
+                        className={`rounded-md px-3 py-1.5 font-semibold transition ${assignmentMode === "matrix" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}>
+                        Matrix
+                      </button>
+                      <button type="button" onClick={() => setAssignmentMode("sets")}
+                        className={`rounded-md px-3 py-1.5 font-semibold transition ${assignmentMode === "sets" ? "bg-oa-gray-5 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}>
+                        Sets
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                {globalWarnings.length > 0 && (
+                  <div className="space-y-1.5">
+                    {globalWarnings.map((w, i) => (
+                      <div key={i} className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                        <span className="shrink-0">⚠</span>
+                        <span>{w.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className={entityLayout === "grid" ? "grid grid-cols-2 gap-3" : "grid gap-3"}>
+                  {entityCards.map((card) => (
+                    <EntityAssignmentCard
+                      key={card.id}
+                      id={card.id}
+                      name={card.name}
+                      week={card.week}
+                      weekEditable={weekScheduleMode === "individual"}
+                      onWeekChange={(w) => handleSetEntityWeek(card.id, w)}
+                      port={card.port}
+                      onUpdatePort={handleUpdateEntityPort}
+                      packType={card.packType}
+                      onUpdatePackType={handleUpdateEntityPackType}
+                      sets={card.sets}
+                      onAddSet={handleAddSet}
+                      onRemoveSet={handleRemoveSet}
+                      onToggleCountryGroup={handleToggleCountryGroup}
+                      onToggleColor={handleToggleColor}
+                      compact={entityLayout === "grid"}
+                      warnings={entityWarnings[card.id] ?? []}
+                      assignmentMode={assignmentMode}
+                      matrix={entityMatrices[card.id] ?? {}}
+                      onToggleMatrix={handleToggleMatrix}
+                      availableCountryGroups={countryGroups}
+                      {...(card.id === 1 ? {
+                        minQtyRetail: minQty,
+                        onMinQtyRetailChange: setMinQty,
+                      } : {})}
+                    />
+                  ))}
+                </div>
+              </div>
+
               <div className="flex flex-wrap gap-3">
                 <Button onClick={() => generateEntities(mode)}>
                   {mode === "bi" ? "Generate BI proposal" : "Generate entities"}
