@@ -169,6 +169,15 @@ export default function QuantityScreen() {
   const [splitViewData, setSplitViewData] = useState<SplitViewData | null>(null);
   const editorRef = useRef<EntityEditorPrototypeHandle>(null);
 
+  const handleGenerateFromModal = () => {
+    const prepared = editorRef.current?.prepareSplitView();
+    if (!prepared) return;
+
+    setSplitViewData(prepared);
+    setEditorOpen(false);
+    setSplitViewOpen(true);
+  };
+
   return (
     <div className="h-screen bg-white flex flex-col font-sans overflow-hidden">
 
@@ -433,12 +442,7 @@ export default function QuantityScreen() {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  const prepared = editorRef.current?.prepareSplitView();
-                  if (prepared) setSplitViewData(prepared);
-                  setEditorOpen(false);
-                  setSplitViewOpen(true);
-                }}
+                onClick={handleGenerateFromModal}
                 className="rounded-lg px-5 py-2 text-sm font-semibold"
                 style={{ backgroundColor: "#00D7B9", color: "rgba(0,0,0,0.87)" }}
               >
