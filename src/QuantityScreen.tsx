@@ -434,7 +434,7 @@ export default function QuantityScreen() {
                 Cancel
               </button>
               <button onClick={() => setEditorOpen(false)} className="rounded-lg px-5 py-2 text-sm font-semibold" style={{ backgroundColor: "#00D7B9", color: "rgba(0,0,0,0.87)" }}>
-                Confirm split
+                Generate entities
               </button>
             </div>
           </div>
