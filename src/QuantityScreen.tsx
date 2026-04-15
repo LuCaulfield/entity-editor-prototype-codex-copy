@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { ChevronDown, ChevronUp, ChevronRight, MoreVertical, Check, Bell } from "lucide-react";
-import EntityEditorPrototype from "./EntityEditorPrototype";
+import EntityEditorPrototype, { type EntityEditorPrototypeHandle } from "./EntityEditorPrototype";
 import SplitViewPanel from "./SplitViewPanel";
+import { type SplitViewData } from "@/lib/splitView";
 
 // ── Stepper ──────────────────────────────────────────────────────────────────
 const STEP_LABELS = ["Style details", "Supplier", "Transport", "Pricing", "Quantity", "Summary"];
@@ -165,6 +166,8 @@ export default function QuantityScreen() {
   const [expanded00J, setExpanded00J] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
   const [splitViewOpen, setSplitViewOpen] = useState(false);
+  const [splitViewData, setSplitViewData] = useState<SplitViewData | null>(null);
+  const editorRef = useRef<EntityEditorPrototypeHandle>(null);
 
   return (
     <div className="h-screen bg-white flex flex-col font-sans overflow-hidden">
@@ -249,7 +252,7 @@ export default function QuantityScreen() {
           </div>
 
           {splitViewOpen ? (
-            <SplitViewPanel />
+            splitViewData ? <SplitViewPanel data={splitViewData} /> : null
           ) : (
             <div style={{ borderRadius: 16, boxShadow: "0px 1px 2px rgba(0,0,0,0.24), 0px 2px 12px rgba(0,0,0,0.08)", overflow: "clip" }}>
               <div className="overflow-x-auto">
@@ -423,7 +426,7 @@ export default function QuantityScreen() {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto">
-              <EntityEditorPrototype asModal />
+              <EntityEditorPrototype ref={editorRef} asModal />
             </div>
             <div className="flex shrink-0 items-center justify-end gap-3 border-t px-6 py-4" style={{ borderColor: "#E0E0E0" }}>
               <button onClick={() => setEditorOpen(false)} className="rounded-lg border px-4 py-2 text-sm font-semibold hover:bg-gray-50" style={{ borderColor: "#E0E0E0", color: "rgba(0,0,0,0.87)" }}>
@@ -431,6 +434,8 @@ export default function QuantityScreen() {
               </button>
               <button
                 onClick={() => {
+                  const prepared = editorRef.current?.prepareSplitView();
+                  if (prepared) setSplitViewData(prepared);
                   setEditorOpen(false);
                   setSplitViewOpen(true);
                 }}

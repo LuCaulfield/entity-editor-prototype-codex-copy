@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,7 @@ import {
 import EntityAssignmentCard from "@/components/EntityAssignmentCard";
 import SummaryCard from "@/components/SummaryCard";
 import LivePreview, { type PreviewEntity } from "@/components/LivePreview";
+import { buildSplitViewData, type SplitViewData } from "@/lib/splitView";
 
 function round(n: number) {
   return Math.round(n);
@@ -43,7 +44,13 @@ const INITIAL_MIN_QTY = 9000;
 
 type EntityWarning = { type: "warning" | "error"; message: string };
 
-export default function EntityEditorPrototype({ asModal = false }: { asModal?: boolean }) {
+export type EntityEditorPrototypeHandle = {
+  prepareSplitView: () => SplitViewData;
+};
+
+const ENTITY_CODES = ["11230849", "11230850", "11230851", "11230852", "11230853", "11230854", "11230855"];
+
+const EntityEditorPrototype = forwardRef<EntityEditorPrototypeHandle, { asModal?: boolean }>(function EntityEditorPrototype({ asModal = false }, ref) {
   const [brand, setBrand] = useState<Brand>(INITIAL_BRAND);
   const countryGroups = BRAND_COUNTRY_GROUPS[brand];
 
@@ -257,29 +264,46 @@ export default function EntityEditorPrototype({ asModal = false }: { asModal?: b
   const generateEntities = (sourceMode = mode) => {
     if (retailPct + ecomPct !== 100) {
       setMessage("Retail + E-commerce must equal 100%.");
-      return;
+      return null;
     }
-    setEntities(
-      makeGeneratedEntities({
-        mode: sourceMode,
-        totalQty,
-        entityCount,
-        startWeek,
-        intervalWeeks,
-        retailPct,
-        ecomPct,
-        entityPackTypes,
-        defaultPackType: INITIAL_PACK_TYPE,
-        minQty,
-        entitySetsConfig,
-      })
-    );
+    const generated = makeGeneratedEntities({
+      mode: sourceMode,
+      totalQty,
+      entityCount,
+      startWeek,
+      intervalWeeks,
+      retailPct,
+      ecomPct,
+      entityPackTypes,
+      defaultPackType: INITIAL_PACK_TYPE,
+      minQty,
+      entitySetsConfig,
+    });
+    setEntities(generated);
     setMessage(
       sourceMode === "bi"
         ? "BI recommendation loaded as editable starting point."
         : "Entities generated from manual parameters."
     );
+    return generated;
   };
+
+  useImperativeHandle(ref, () => ({
+    prepareSplitView() {
+      const generated = generateEntities(mode) ?? entities;
+      return buildSplitViewData({
+        totalQty,
+        entities: generated.map((entity, index) => ({
+          id: entity.id,
+          name: ENTITY_CODES[index] ?? entity.name,
+          qty: entity.qty,
+          port: entityPorts[entity.id] ?? INITIAL_PORT,
+          packType: entityPackTypes[entity.id] ?? INITIAL_PACK_TYPE,
+          sets: entity.sets,
+        })),
+      });
+    },
+  }), [mode, entities, totalQty, entityPorts, entityPackTypes, entityCount, startWeek, intervalWeeks, retailPct, ecomPct, minQty, entitySetsConfig]);
 
   // --- Set handlers ---
   const handleAddSet = (entityId: number) => {
@@ -709,4 +733,6 @@ export default function EntityEditorPrototype({ asModal = false }: { asModal?: b
       </div>
     </div>
   );
-}
+});
+
+export default EntityEditorPrototype;

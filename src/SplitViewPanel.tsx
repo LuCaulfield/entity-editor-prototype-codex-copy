@@ -1,106 +1,10 @@
 import React from "react";
-import { ChevronDown, MoreVertical, Package2, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, MoreVertical, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { type SplitMatrixCard, type SplitSidebarEntity, type SplitViewData } from "@/lib/splitView";
 
-type EntitySummary = {
-  id: number;
-  code: string;
-  qty: string;
-  expanded?: boolean;
-  colors?: { color: string; qty: string }[];
-};
-
-type EntityMatrixCard = {
-  id: number;
-  code: string;
-  qty: string;
-  port: string;
-  packType: string;
-  transport: string;
-  badge?: string;
-  tone?: "default" | "teal";
-  activeColumn: string;
-  matrix: { color: string; values: string[] }[];
-};
-
-const SIDEBAR_ENTITIES: EntitySummary[] = [
-  {
-    id: 1,
-    code: "11230849",
-    qty: "24 000",
-    expanded: true,
-    colors: [
-      { color: "00J", qty: "8 000" },
-      { color: "11M", qty: "8 000" },
-      { color: "22P", qty: "8 000" },
-    ],
-  },
-  { id: 2, code: "11230850", qty: "9 000" },
-  { id: 3, code: "11230851", qty: "9 000" },
-];
-
-const COUNTRY_COLUMNS = ["UE", "Non UE", "UE Ecom", "UE South", "UE South Ecom", "No-EACU"];
-
-const ENTITY_CARDS: EntityMatrixCard[] = [
-  {
-    id: 1,
-    code: "11230849",
-    qty: "24 000",
-    port: "Gdynia",
-    packType: "Retail Pack",
-    transport: "SEA",
-    badge: "ORDERED",
-    activeColumn: "A",
-    matrix: [
-      { color: "00J", values: ["2 000", "1 000", "1 000", "2 000", "1 000", "1 000"] },
-      { color: "11M", values: ["2 000", "1 000", "1 000", "2 000", "1 000", "1 000"] },
-      { color: "22P", values: ["2 000", "1 000", "1 000", "2 000", "1 000", "1 000"] },
-    ],
-  },
-  {
-    id: 2,
-    code: "11230850",
-    qty: "9 000",
-    port: "Gdynia",
-    packType: "Retail Pack",
-    transport: "SEA",
-    badge: "BOOKED",
-    activeColumn: "R",
-    matrix: [
-      { color: "00J", values: ["1 500", "1 500", "0", "0", "0", "0"] },
-      { color: "11M", values: ["1 500", "1 500", "0", "0", "0", "0"] },
-      { color: "22P", values: ["1 500", "1 500", "0", "0", "0", "0"] },
-    ],
-  },
-  {
-    id: 3,
-    code: "11230851",
-    qty: "9 000",
-    port: "Constanta",
-    packType: "Ecom Pack",
-    transport: "SEA",
-    badge: "ORDERED",
-    tone: "teal",
-    activeColumn: "A",
-    matrix: [
-      { color: "00J", values: ["0", "0", "1 500", "0", "1 500", "0"] },
-      { color: "11M", values: ["0", "0", "1 500", "0", "1 500", "0"] },
-      { color: "22P", values: ["0", "0", "1 500", "0", "1 500", "0"] },
-    ],
-  },
-];
-
-const SUMMARY_COUNTRY_GROUPS = [
-  { group: "UE", share: "25%", qty: "10 500" },
-  { group: "Non UE", share: "18%", qty: "7 500" },
-  { group: "UE Ecom", share: "18%", qty: "7 500" },
-  { group: "UE South", share: "14%", qty: "6 000" },
-  { group: "UE South Ecom", share: "18%", qty: "7 500" },
-  { group: "No-EACU", share: "7%", qty: "3 000" },
-];
-
-function SidebarEntityCard({ entity }: { entity: EntitySummary }) {
+function SidebarEntityCard({ entity }: { entity: SplitSidebarEntity }) {
   return (
     <div className="space-y-2">
       <div className="flex items-start justify-between gap-3">
@@ -166,7 +70,7 @@ function SummarySection({
   );
 }
 
-function SplitEntityCard({ card }: { card: EntityMatrixCard }) {
+function SplitEntityCard({ card, columns }: { card: SplitMatrixCard; columns: string[] }) {
   const isTeal = card.tone === "teal";
 
   return (
@@ -222,7 +126,7 @@ function SplitEntityCard({ card }: { card: EntityMatrixCard }) {
 
         <div className="grid grid-cols-[70px_repeat(6,minmax(0,1fr))] gap-1">
           <div />
-          {COUNTRY_COLUMNS.map((column) => (
+          {columns.map((column) => (
             <div
               key={column}
               className={`rounded-t px-1 py-1 text-center text-[10px] font-semibold ${isTeal ? "bg-white/15 text-white" : "bg-[#F2F2F2] text-[#787878]"}`}
@@ -238,7 +142,7 @@ function SplitEntityCard({ card }: { card: EntityMatrixCard }) {
               </div>
               {row.values.map((value, index) => (
                 <div
-                  key={`${row.color}-${COUNTRY_COLUMNS[index]}`}
+                  key={`${row.color}-${columns[index]}`}
                   className={`min-h-[56px] rounded border px-1 py-1 ${isTeal ? "border-white/10 bg-white/5 text-white" : "border-[#E8E8E8] bg-white text-[#4F4F4F]"}`}
                 >
                   <div className="mb-2 flex items-center justify-between text-[10px]">
@@ -252,7 +156,7 @@ function SplitEntityCard({ card }: { card: EntityMatrixCard }) {
           ))}
 
           <div />
-          {COUNTRY_COLUMNS.map((column, index) => (
+          {columns.map((column, index) => (
             <div key={`footer-${card.id}-${column}`} className={`text-center text-[10px] ${isTeal ? "text-white/70" : "text-[#9A9A9A]"}`}>
               {card.matrix.reduce((sum, row) => sum + Number(row.values[index].replace(/\s/g, "")), 0).toLocaleString("en-US").replace(/,/g, " ")}
             </div>
@@ -263,7 +167,9 @@ function SplitEntityCard({ card }: { card: EntityMatrixCard }) {
   );
 }
 
-export default function SplitViewPanel() {
+export default function SplitViewPanel({ data }: { data: SplitViewData }) {
+  const safeColumns = data.columns.length > 0 ? data.columns : data.countryGroups.map((group) => group.group);
+
   return (
     <div className="overflow-hidden rounded-2xl bg-[#F2F2F2] shadow-[0px_1px_2px_rgba(0,0,0,0.24),0px_2px_12px_rgba(0,0,0,0.08)]">
       <div className="grid min-h-[1280px] grid-cols-[256px_minmax(0,1fr)_256px]">
@@ -282,7 +188,7 @@ export default function SplitViewPanel() {
               <ChevronDown className="h-5 w-5 text-[#787878]" />
             </div>
             <div className="space-y-4 px-3 py-4">
-              {SIDEBAR_ENTITIES.map((entity, index) => (
+              {data.sidebarEntities.map((entity, index) => (
                 <React.Fragment key={entity.id}>
                   {index > 0 && <Separator className="bg-[#D9D9D9]" />}
                   <SidebarEntityCard entity={entity} />
@@ -309,12 +215,12 @@ export default function SplitViewPanel() {
 
           <div className="mb-3 flex items-center gap-3">
             <span className="text-[16px] uppercase leading-[18px] text-[#4F4F4F]">Entities</span>
-            <span className="text-[18px] font-semibold text-[#4F4F4F]">3/3</span>
+            <span className="text-[18px] font-semibold text-[#4F4F4F]">{data.entityCountLabel}</span>
           </div>
 
           <div className="space-y-5">
-            {ENTITY_CARDS.map((card) => (
-              <SplitEntityCard key={card.id} card={card} />
+            {data.entityCards.map((card) => (
+              <SplitEntityCard key={card.id} card={card} columns={safeColumns} />
             ))}
           </div>
         </section>
@@ -326,8 +232,8 @@ export default function SplitViewPanel() {
               suffix="psc"
               rows={
                 <div className="flex items-center justify-between text-[16px]">
-                  <span className="uppercase text-black">277IY</span>
-                  <span className="font-semibold text-[#4F4F4F]">42 000</span>
+                  <span className="uppercase text-black">{data.styleCode}</span>
+                  <span className="font-semibold text-[#4F4F4F]">{data.totalQty}</span>
                 </div>
               }
             />
@@ -338,10 +244,10 @@ export default function SplitViewPanel() {
               collapsible
               rows={
                 <>
-                  {["00J", "11M", "22P"].map((color) => (
-                    <div key={color} className="flex items-center justify-between text-[16px] text-[#4F4F4F]">
-                      <span className="font-bold">{color}</span>
-                      <span className="font-semibold">14 000</span>
+                  {data.colors.map((item) => (
+                    <div key={item.color} className="flex items-center justify-between text-[16px] text-[#4F4F4F]">
+                      <span className="font-bold">{item.color}</span>
+                      <span className="font-semibold">{item.qty}</span>
                     </div>
                   ))}
                 </>
@@ -354,7 +260,7 @@ export default function SplitViewPanel() {
               collapsible
               rows={
                 <>
-                  {SUMMARY_COUNTRY_GROUPS.map((item) => (
+                  {data.countryGroups.map((item) => (
                     <div key={item.group} className="flex items-center justify-between gap-3 text-[16px] text-[#4F4F4F]">
                       <span className="font-bold">{item.group}</span>
                       <div className="flex items-center gap-2">
