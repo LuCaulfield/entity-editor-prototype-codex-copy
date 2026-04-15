@@ -8,7 +8,7 @@ const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HT
       ref={ref}
       type={type}
       className={cn(
-        "inline-flex items-center justify-center rounded bg-primary-50 px-4 py-2 text-sm font-normal uppercase tracking-wide text-white transition hover:bg-primary-80 focus:outline-none focus:ring-2 focus:ring-primary-10 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center rounded bg-primary-50 px-4 py-2 text-sm font-normal uppercase tracking-wide text-oa-text transition hover:bg-primary-80 focus:outline-none focus:ring-2 focus:ring-primary-10 disabled:pointer-events-none disabled:opacity-50",
         className
       )}
       {...props}

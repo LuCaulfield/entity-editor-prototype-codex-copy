@@ -384,7 +384,7 @@ export default function EntityEditorPrototype({ asModal = false }: { asModal?: b
       {BRANDS.map((b) => (
         <button key={b.id} type="button" onClick={() => handleBrandChange(b.id)}
           className={`rounded-md px-4 py-1.5 text-sm font-semibold transition ${
-            brand === b.id ? "bg-white text-primary-50" : "text-white/80 hover:text-white"
+            brand === b.id ? "bg-white text-oa-text" : "text-white/80 hover:text-white"
           }`}>
           {b.label}
         </button>
@@ -425,14 +425,14 @@ export default function EntityEditorPrototype({ asModal = false }: { asModal?: b
                     <button
                       type="button"
                       onClick={() => setWeekScheduleMode("interval")}
-                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "interval" ? "bg-primary-50 text-white" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "interval" ? "bg-primary-50 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
                     >
                       Default
                     </button>
                     <button
                       type="button"
                       onClick={() => setWeekScheduleMode("individual")}
-                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "individual" ? "bg-primary-50 text-white" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
+                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "individual" ? "bg-primary-50 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}
                     >
                       Individual
                     </button>
@@ -602,11 +602,11 @@ export default function EntityEditorPrototype({ asModal = false }: { asModal?: b
                   <span className="text-xs font-semibold text-oa-gray-40">Delivery dates</span>
                   <div className="flex h-8 items-center rounded border border-oa-border bg-white p-0.5 text-xs shadow-sm">
                     <button type="button" onClick={() => setWeekScheduleMode("interval")}
-                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "interval" ? "bg-primary-50 text-white" : "text-oa-gray-40 hover:text-oa-gray-70"}`}>
+                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "interval" ? "bg-primary-50 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}>
                       Default
                     </button>
                     <button type="button" onClick={() => setWeekScheduleMode("individual")}
-                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "individual" ? "bg-primary-50 text-white" : "text-oa-gray-40 hover:text-oa-gray-70"}`}>
+                      className={`h-full rounded-lg px-3 font-semibold transition ${weekScheduleMode === "individual" ? "bg-primary-50 text-oa-text" : "text-oa-gray-40 hover:text-oa-gray-70"}`}>
                       Individual
                     </button>
                   </div>

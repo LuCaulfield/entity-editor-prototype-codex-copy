@@ -68,7 +68,7 @@ export default function EntityAssignmentCard({
       <div className="mb-4 flex flex-wrap items-start justify-between gap-y-2 gap-x-3">
         <div className="flex items-center gap-2.5 pt-1">
           {id === 1 && (
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-white">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-oa-text">
               A
             </div>
           )}
@@ -174,7 +174,7 @@ export default function EntityAssignmentCard({
                               type="button"
                               onClick={() => onToggleCountryGroup(id, set.id, group)}
                               className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
-                                activeInThis ? "border-primary-50 bg-primary-50 text-white"
+                                activeInThis ? "border-primary-50 bg-primary-50 text-oa-text"
                                 : takenByOther ? "border-oa-border bg-white text-oa-gray-40 hover:border-primary-50 hover:text-primary-50"
                                 : "border-oa-border bg-white text-oa-gray-70 hover:border-primary-50 hover:text-primary-50"
                               }`}
@@ -241,7 +241,7 @@ export default function EntityAssignmentCard({
                           onClick={() => onToggleMatrix?.(id, group, color)}
                           className={`mx-auto flex h-7 w-7 items-center justify-center rounded-md border transition ${
                             active
-                              ? "border-primary-50 bg-primary-50 text-white"
+                              ? "border-primary-50 bg-primary-50 text-oa-text"
                               : "border-oa-border bg-white text-oa-gray-40 hover:border-primary-50 hover:text-primary-50"
                           }`}
                           title={`${color} × ${group}`}
