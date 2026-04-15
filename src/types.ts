@@ -22,7 +22,7 @@ export type Entity = {
 };
 
 export const availableColors = ["00J", "11M", "22P", "44K"];
-export const availableCountryGroups = ["UE", "Non UE", "UE South", "UE Ecom", "UE Ecom South", "No-EACU"];
+export const availableCountryGroups = ["UE", "Non UE", "UE South", "UE Ecom", "UE Ecom South", "NO-EACU"];
 export const biSuggestion = [0.5, 0.25, 0.25];
 
 export type Brand = "sinsay" | "other";
@@ -33,12 +33,12 @@ export const BRANDS: { id: Brand; label: string }[] = [
 ];
 
 export const BRAND_COUNTRY_GROUPS: Record<Brand, string[]> = {
-  sinsay: ["UE", "Non UE", "UE Ecom", "UE South", "UE Ecom South", "No-EACU"],
+  sinsay: ["UE", "Non UE", "UE Ecom", "UE South", "UE Ecom South", "NO-EACU"],
   other: ["UE", "Non UE", "UE Ecom"],
 };
 
 export const BRAND_DEFAULT_ENTITY_COUNT: Record<Brand, number> = {
-  sinsay: 5,
+  sinsay: 6,
   other: 2,
 };
 
@@ -50,6 +50,7 @@ export const BRAND_DEFAULT_COUNTRY_GROUPS_PER_ENTITY: Record<Brand, Record<numbe
     3: ["UE Ecom"],
     4: ["UE South"],
     5: ["UE Ecom South"],
+    6: ["NO-EACU"],
   },
   other: {
     1: ["UE", "Non UE"],

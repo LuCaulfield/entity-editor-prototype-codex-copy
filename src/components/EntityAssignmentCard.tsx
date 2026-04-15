@@ -59,7 +59,7 @@ export default function EntityAssignmentCard({
   assignmentMode = "sets",
   matrix = {},
   onToggleMatrix,
-  availableCountryGroups = ["UE", "Non UE", "UE South", "UE Ecom", "UE Ecom South", "No-EACU"],
+  availableCountryGroups = ["UE", "Non UE", "UE South", "UE Ecom", "UE Ecom South", "NO-EACU"],
 }: EntityAssignmentCardProps) {
   const hasError = warnings.some((w) => w.type === "error");
   return (
