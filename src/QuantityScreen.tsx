@@ -129,11 +129,12 @@ function CheckboxIcon({ muted = false }: { muted?: boolean }) {
 
 // ── Entity data ───────────────────────────────────────────────────────────────
 const ENTITIES = [
-  { qty: "3 500", share: "20 %", shareAlt: "",       country: "UE" },
-  { qty: "1 000", share: "20 %", shareAlt: "",       country: "Non UE" },
-  { qty: "2 500", share: "20 %", shareAlt: "(33 %)", country: "UE Ecom" },
-  { qty: "3 500", share: "20 %", shareAlt: "",       country: "UE South" },
-  { qty: "2 500", share: "20 %", shareAlt: "(33 %)", country: "UE Ecom South" },
+  { qty: "3 500", share: "25 %", shareAlt: "",       country: "UE" },
+  { qty: "1 000", share: "7 %",  shareAlt: "",       country: "Non UE" },
+  { qty: "2 500", share: "18 %", shareAlt: "(33 %)", country: "UE Ecom" },
+  { qty: "3 500", share: "25 %", shareAlt: "",       country: "UE South" },
+  { qty: "2 500", share: "18 %", shareAlt: "(33 %)", country: "UE Ecom South" },
+  { qty: "1 000", share: "7 %",  shareAlt: "",       country: "No-EACU" },
 ];
 
 // ── Column widths (total = 1392px) ────────────────────────────────────────────
@@ -153,9 +154,9 @@ const S = {
 
 // ── Color rows data ───────────────────────────────────────────────────────────
 const COLOR_ROWS = [
-  { id: "00J", color: "00J", qty: "13 000", hasEntities: true },
-  { id: "11M", color: "11M", qty: "13 000", hasEntities: false },
-  { id: "22P", color: "22P", qty: "13 000", hasEntities: false },
+  { id: "00J", color: "00J", qty: "14 000", hasEntities: true },
+  { id: "11M", color: "11M", qty: "14 000", hasEntities: false },
+  { id: "22P", color: "22P", qty: "14 000", hasEntities: false },
 ];
 
 // ── Main component ────────────────────────────────────────────────────────────
